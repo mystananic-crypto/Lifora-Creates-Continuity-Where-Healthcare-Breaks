@@ -282,10 +282,7 @@
           <a href="#" data-view="p-dashboard" class="active">Dashboard</a>
           <a href="#" data-view="p-healthid">Digital Health ID</a>
           <a href="#" data-view="p-profile">Medical Profile</a>
-          <a href="#" data-view="p-vault">Medical Vault</a>
-          <a href="#" data-view="p-history">Medical History</a>
-          <a href="#" data-view="p-prescriptions">Prescriptions</a>
-          <a href="#" data-view="p-reports">Reports</a>
+          <a href="#" data-view="p-records">Medical Records</a>
           <a href="#" data-view="p-qr">QR Health ID</a>
           <a href="#" data-view="p-contacts">Emergency Contacts</a>
           <a href="#" data-view="p-consent">Consent &amp; Privacy</a>
@@ -394,57 +391,61 @@
           <p class="section-note" id="profileStatus"></p>
         </div>
 
-        <!-- MEDICAL HISTORY -->
-        <div class="view" id="view-p-history">
-          <div class="page-head"><span class="eyebrow">Medical History</span><h1>Visit &amp; condition timeline</h1></div>
-          <ul class="timeline">
-            <li><span class="mono">2024</span><div><h4>Routine diabetes review</h4><p>City Hospital — Endocrinology. HbA1c stable.</p></div></li>
-            <li><span class="mono">2021</span><div><h4>Fracture — left wrist</h4><p>Sunrise Clinic — Orthopedics. Cast for 6 weeks.</p></div></li>
-            <li><span class="mono">2019</span><div><h4>Appendectomy</h4><p>City Hospital — General Surgery. Full recovery.</p></div></li>
-            <li><span class="mono">2016</span><div><h4>Type 1 Diabetes diagnosis</h4><p>City Hospital — Endocrinology.</p></div></li>
-          </ul>
-        </div>
-
-        <!-- PRESCRIPTIONS -->
-        <div class="view" id="view-p-prescriptions">
-          <div class="page-head"><span class="eyebrow">Prescriptions</span><h1>Current &amp; past prescriptions</h1></div>
-          <div class="table-wrap">
-            <table class="data-table">
-              <thead><tr><th>Medication</th><th>Dosage</th><th>Prescribed by</th><th>Date</th><th>Status</th></tr></thead>
-              <tbody>
-                <tr><td>Insulin (Lantus)</td><td>10 units, nightly</td><td>Dr. S. Bhatt</td><td>Jan 2026</td><td><span class="badge badge-mint">Active</span></td></tr>
-                <tr><td>Metformin</td><td>500mg, twice daily</td><td>Dr. S. Bhatt</td><td>Nov 2025</td><td><span class="badge badge-mint">Active</span></td></tr>
-                <tr><td>Amoxicillin</td><td>250mg, 3x daily</td><td>Dr. R. Iyer</td><td>Mar 2023</td><td><span class="badge badge-muted">Completed</span></td></tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-
-        <!-- REPORTS -->
-        <div class="view" id="view-p-reports">
-          <div class="page-head"><span class="eyebrow">Reports</span><h1>Lab &amp; imaging reports</h1></div>
-          <div class="doc-grid" id="reportsGrid"></div>
-        </div>
-
-        <!-- MEDICAL VAULT -->
-        <div class="view" id="view-p-vault">
+        <!-- UNIFIED MEDICAL RECORDS -->
+        <div class="view" id="view-p-records">
           <div class="page-head split-head">
-            <div><span class="eyebrow">Medical Vault</span><h1>Your secure document store</h1></div>
+            <div><span class="eyebrow">Medical Records</span><h1>Everything important in one place</h1><p class="section-note">Scroll through your records by compartment. Detailed patient information stays organized instead of crowding the dashboard.</p></div>
             <button class="btn btn-primary" id="openUploadModal">+ Upload document</button>
           </div>
 
-          <div class="vault-filters" id="vaultFilters">
-            <button class="chip active" data-cat="all">All</button>
-            <button class="chip" data-cat="Lab Reports">Lab Reports</button>
-            <button class="chip" data-cat="Prescriptions">Prescriptions</button>
-            <button class="chip" data-cat="Imaging">Imaging</button>
-            <button class="chip" data-cat="Discharge Summaries">Discharge Summaries</button>
-            <button class="chip" data-cat="Vaccination">Vaccination</button>
-            <button class="chip" data-cat="Diagnosis">Diagnosis</button>
-            <button class="chip" data-cat="Other">Other</button>
-          </div>
+          <div class="medical-records-stack">
+            <section class="medical-record-compartment" aria-labelledby="recordsVaultTitle">
+              <div class="record-compartment-head">
+                <div><span class="record-index">01</span><div><h2 id="recordsVaultTitle">Medical Vault</h2><p>Secure documents and uploaded health information.</p></div></div>
+                <button class="btn btn-secondary btn-sm" type="button" id="recordsVaultUploadBtn">Upload</button>
+              </div>
+              <div class="vault-filters" id="vaultFilters">
+                <button class="chip active" data-cat="all">All</button>
+                <button class="chip" data-cat="Lab Reports">Lab Reports</button>
+                <button class="chip" data-cat="Prescriptions">Prescriptions</button>
+                <button class="chip" data-cat="Imaging">Imaging</button>
+                <button class="chip" data-cat="Discharge Summaries">Discharge Summaries</button>
+                <button class="chip" data-cat="Vaccination">Vaccination</button>
+                <button class="chip" data-cat="Diagnosis">Diagnosis</button>
+                <button class="chip" data-cat="Other">Other</button>
+              </div>
+              <div class="doc-grid" id="vaultGrid"></div>
+            </section>
 
-          <div class="doc-grid" id="vaultGrid"></div>
+            <section class="medical-record-compartment" aria-labelledby="recordsHistoryTitle">
+              <div class="record-compartment-head"><div><span class="record-index">02</span><div><h2 id="recordsHistoryTitle">Medical History</h2><p>Visit and condition timeline, kept in chronological order.</p></div></div></div>
+              <ul class="timeline compact-timeline">
+                <li><span class="mono">2024</span><div><h4>Routine diabetes review</h4><p>City Hospital — Endocrinology. HbA1c stable.</p></div></li>
+                <li><span class="mono">2021</span><div><h4>Fracture — left wrist</h4><p>Sunrise Clinic — Orthopedics. Cast for 6 weeks.</p></div></li>
+                <li><span class="mono">2019</span><div><h4>Appendectomy</h4><p>City Hospital — General Surgery. Full recovery.</p></div></li>
+                <li><span class="mono">2016</span><div><h4>Type 1 Diabetes diagnosis</h4><p>City Hospital — Endocrinology.</p></div></li>
+              </ul>
+            </section>
+
+            <section class="medical-record-compartment" aria-labelledby="recordsRxTitle">
+              <div class="record-compartment-head"><div><span class="record-index">03</span><div><h2 id="recordsRxTitle">Prescriptions</h2><p>Current and previous medicines with prescribing clinician and status.</p></div></div></div>
+              <div class="table-wrap">
+                <table class="data-table responsive-record-table">
+                  <thead><tr><th>Medication</th><th>Dosage</th><th>Prescribed by</th><th>Date</th><th>Status</th></tr></thead>
+                  <tbody>
+                    <tr><td>Insulin (Lantus)</td><td>10 units, nightly</td><td>Dr. S. Bhatt</td><td>Jan 2026</td><td><span class="badge badge-mint">Active</span></td></tr>
+                    <tr><td>Metformin</td><td>500mg, twice daily</td><td>Dr. S. Bhatt</td><td>Nov 2025</td><td><span class="badge badge-mint">Active</span></td></tr>
+                    <tr><td>Amoxicillin</td><td>250mg, 3x daily</td><td>Dr. R. Iyer</td><td>Mar 2023</td><td><span class="badge badge-muted">Completed</span></td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </section>
+
+            <section class="medical-record-compartment" aria-labelledby="recordsReportsTitle">
+              <div class="record-compartment-head"><div><span class="record-index">04</span><div><h2 id="recordsReportsTitle">Reports &amp; Investigations</h2><p>Lab and imaging reports stay together with their original document context.</p></div></div></div>
+              <div class="doc-grid" id="reportsGrid"></div>
+            </section>
+          </div>
         </div>
 
         <!-- QR HEALTH ID -->
@@ -690,12 +691,7 @@
             <button type="button" class="chip" data-risk="Children">Children</button>
             <button type="button" class="chip" data-risk="Elderly">Elderly</button>
           </div>
-          <div class="table-wrap">
-            <table class="data-table" id="ashaPatientsTable">
-              <thead><tr><th>Name</th><th>Age / Gender</th><th>Village</th><th>Risk level</th><th>Last visit</th><th>Next follow-up</th><th>Assigned worker</th><th></th></tr></thead>
-              <tbody></tbody>
-            </table>
-          </div>
+          <div class="compact-patient-grid" id="ashaPatientsGrid"></div>
         </div>
 
         <!-- PATIENT PROFILE (drill-down from Patients / Dashboard) -->
@@ -1232,7 +1228,12 @@
       <main class="content">
 
         <div class="view active" id="view-ad-analytics">
-          <div class="page-head"><span class="eyebrow">Hospital Analytics</span><h1>Emergency department performance</h1></div>
+          <div class="page-head"><span class="eyebrow">Hospital Analytics</span><h1>Emergency department performance</h1><p class="section-note">Patient details stay hidden until a record is selected.</p></div>
+
+          <section class="card patient-directory-card">
+            <div class="section-heading-row"><div><h3>Patient Directory</h3><p class="section-note">Click a patient name to open the complete record.</p></div><span class="badge badge-blue">Protected view</span></div>
+            <div class="compact-patient-grid" id="adminPatientDirectory"></div>
+          </section>
 
           <div class="dash-grid analytics-kpis">
             <div class="card kpi-card"><span>Total emergency patients (30d)</span><strong>412</strong></div>
@@ -1328,6 +1329,17 @@
   </div>
 </div>
 
+<!-- ============ PATIENT DETAIL MODAL ============ -->
+<div class="modal-overlay" id="patientDetailModalOverlay" aria-hidden="true">
+  <div class="modal patient-detail-modal" role="dialog" aria-modal="true" aria-labelledby="patientDetailTitle">
+    <div class="modal-head">
+      <div><span class="eyebrow">Patient Details</span><h3 id="patientDetailTitle">Patient</h3></div>
+      <button class="icon-btn" id="closePatientDetailModal" aria-label="Close patient details">✕</button>
+    </div>
+    <div id="patientDetailBody" class="patient-detail-body"></div>
+  </div>
+</div>
+
 <!-- ============ UPLOAD MODAL ============ -->
 <div class="modal-overlay" id="uploadModalOverlay">
   <div class="modal">
@@ -1363,9 +1375,22 @@
       <span class="logo-word">Lifora</span>
     </div>
     <h1 class="auth-heading">Right Care. Right Place. Right Time.</h1>
-    <p class="section-note" style="margin-bottom:14px;">Prototype login simulation — no real SMS or email is sent. Use one of the demo accounts below to try it.</p>
+    <p class="section-note" style="margin-bottom:14px;">Choose the portal first, then sign in. This keeps Patient and Admin access clearly separated.</p>
 
-    <button class="btn btn-secondary" id="quickDemoSignInBtn" style="width:100%;margin-bottom:16px;background:var(--teal-100);border:1.5px solid var(--teal-700);color:var(--teal-950);font-weight:700;padding:11px 16px;">⚡ Quick Demo Sign In (1-Click Access)</button>
+    <div class="login-role-switch" id="loginRoleSwitch" aria-label="Choose portal">
+      <button class="login-role-card active" type="button" data-login-role="patient">
+        <span class="login-role-icon">👤</span>
+        <span><strong>Patient / Citizen</strong><small>Health ID, records, referrals &amp; follow-up</small></span>
+      </button>
+      <button class="login-role-card" type="button" data-login-role="admin">
+        <span class="login-role-icon">🏥</span>
+        <span><strong>Admin / Healthcare Staff</strong><small>Patient coordination, referrals &amp; hospital operations</small></span>
+      </button>
+    </div>
+
+    <button class="btn btn-secondary" id="quickDemoSignInBtn" style="width:100%;margin-bottom:16px;background:var(--teal-100);border:1.5px solid var(--teal-700);color:var(--teal-950);font-weight:700;padding:11px 16px;">⚡ Quick Demo Sign In</button>
+
+    <div class="login-selected-role" id="loginSelectedRole">Signing in to <strong>Patient Portal</strong></div>
 
     <div class="login-method-switch">
       <button class="chip active" data-method="phone">📱 Phone</button>
@@ -1380,7 +1405,7 @@
       </div>
       <div class="login-field" id="loginEmailField" style="display:none;">
         <label>Email address<input type="email" id="loginEmailInput" placeholder="you@example.com"></label>
-        <p class="login-hint">Demo email: <span class="mono">bs12054@gmail.com</span></p>
+        <p class="login-hint">Demo email: <span class="mono">PS21058@gmail.com</span></p>
       </div>
       <button class="btn btn-primary" id="sendOtpBtn" style="width:100%;margin-top:6px;">Send OTP</button>
     </div>

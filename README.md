@@ -45,7 +45,7 @@
 2. Open `index.html` in any modern web browser (Chrome, Edge, Firefox, Safari).
 3. Click **"⚡ Quick Demo Sign In (1-Click Access)"** or use:
    - **Phone**: `9265470008` (Demo OTP: `140706`)
-   - **Email**: `bs12054@gmail.com` (Demo OTP: `041005`)
+   - **Email**: `PS21058@gmail.com` (Demo OTP: `041005`)
 
 ---
 
@@ -61,3 +61,12 @@
 ## 🏆 SIH 2026 Team Deliverable
 - **Platform**: Lifora (SIH26133)
 - **Built for**: Smart India Hackathon 2026
+
+
+## UI architecture updates
+
+- Patient and Admin / Healthcare Staff are explicitly separated at the login gate before access is granted.
+- Patient-facing medical information is grouped into one scrollable **Medical Records** experience containing Medical Vault, Medical History, Prescriptions, and Reports & Investigations.
+- Patient directories use compact name-only cards; full details open in a single protected detail modal instead of showing large information blocks by default.
+- Admin analytics now includes a compact patient directory so patient details remain hidden until a record is selected.
+- Demo email is `PS21058@gmail.com` with OTP `041005`; demo phone remains `9265470008` with OTP `140706`.

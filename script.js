@@ -231,10 +231,11 @@
 
   const DEMO_LOGIN = {
     phone: { value: "9265470008", otp: "140706", name: "Aarav Rao" },
-    email: { value: "bs12054@gmail.com", otp: "041005", name: "Aarav Rao" }
+    email: { value: "PS21058@gmail.com", otp: "041005", name: "Aarav Rao" }
   };
 
   let loginMethod = "phone";
+  let loginRole = "patient";
   let pendingLoginTarget = "";
 
   function getLoginState() {
@@ -276,6 +277,13 @@
     $("#loginError").textContent = "";
   }
 
+  function setLoginRole(role) {
+    loginRole = role === "admin" ? "admin" : "patient";
+    $all("#loginRoleSwitch .login-role-card").forEach(card => card.classList.toggle("active", card.dataset.loginRole === loginRole));
+    const label = $("#loginSelectedRole");
+    if (label) label.innerHTML = `Signing in to <strong>${loginRole === "admin" ? "Admin / Healthcare Staff Portal" : "Patient Portal"}</strong>`;
+  }
+
   // Reveals the whole app and hides the auth gate. There is no "open the
   // gate" counterpart with its own function — the gate is the default
   // state (body starts with class="pre-auth" in the HTML), so nothing
@@ -304,12 +312,21 @@
     const quickDemoBtn = $("#quickDemoSignInBtn");
     if (quickDemoBtn) {
       quickDemoBtn.addEventListener("click", () => {
-        setLoginState({ method: "demo", target: "9265470008", name: "Aarav Rao", time: Date.now() });
-        logAudit("Demo sign in", "Aarav Rao", "Aarav Rao", "login");
-        toast("Signed in as Aarav Rao (Demo mode)");
+        const isAdmin = loginRole === "admin";
+        setLoginState({ method: "demo", target: "9265470008", name: isAdmin ? "Hospital Admin" : "Aarav Rao", role: loginRole, time: Date.now() });
+        logAudit("Demo sign in", isAdmin ? "Hospital Admin" : "Aarav Rao", isAdmin ? "Admin Portal" : "Aarav Rao", "login");
+        toast(isAdmin ? "Signed in to Admin / Healthcare Staff Portal" : "Signed in to Patient Portal");
         revealApp();
+        navigateTo(isAdmin ? "admin" : "patient");
       });
     }
+
+    $all("#loginRoleSwitch .login-role-card").forEach(card => {
+      card.addEventListener("click", () => {
+        setLoginRole(card.dataset.loginRole);
+        resetLoginStep();
+      });
+    });
 
     $all(".login-method-switch .chip").forEach(chip => {
       chip.addEventListener("click", () => {
@@ -365,10 +382,12 @@
         return;
       }
 
-      setLoginState({ method: loginMethod, target: pendingLoginTarget, name: demo.name, time: Date.now() });
-      logAudit("Patient signed in", demo.name, demo.name, "login");
-      toast(`Signed in as ${demo.name} via ${loginMethod === "phone" ? "phone OTP" : "email OTP"}`);
+      const signedInName = loginRole === "admin" ? "Hospital Admin" : demo.name;
+      setLoginState({ method: loginMethod, target: pendingLoginTarget, name: signedInName, role: loginRole, time: Date.now() });
+      logAudit(loginRole === "admin" ? "Admin signed in" : "Patient signed in", signedInName, loginRole === "admin" ? "Admin Portal" : demo.name, "login");
+      toast(`Signed in to ${loginRole === "admin" ? "Admin / Healthcare Staff Portal" : "Patient Portal"} via ${loginMethod === "phone" ? "phone OTP" : "email OTP"}`);
       revealApp();
+      navigateTo(loginRole === "admin" ? "admin" : "patient");
     });
 
     // Enter key submits the current step, since there's no way to click
@@ -418,6 +437,7 @@
     if (db.auditLog.length > 80) db.auditLog.length = 80;
     if (viewIsActive("p-access")) renderPatientAccessTable();
     if (viewIsActive("ad-audit")) renderAdminAuditTable();
+    if (viewIsActive("ad-analytics")) renderAdminPatientDirectory();
     saveDB();
   }
 
@@ -554,6 +574,7 @@
   }
 
   const viewRenderers = {
+    "p-records": renderMedicalRecords,
     "p-vault": renderVaultGrid,
     "p-reports": renderReportsGrid,
     "p-access": renderPatientAccessTable,
@@ -567,6 +588,7 @@
     "r-availability": renderBloodGrid,
     "r-medicines": renderMedicineTable,
     "ad-analytics": renderAnalytics,
+    "ad-patients": renderAdminPatientDirectory,
     "ad-audit": renderAdminAuditTable,
     "h-triage": renderTriageApplyToOptions,
     "h-referrals": renderHospitalReferrals,
@@ -1311,6 +1333,80 @@
       </div>`;
   }
 
+  function renderMedicalRecords() {
+    renderVaultGrid();
+    renderReportsGrid();
+  }
+
+  function patientDetailHtml(record) {
+    const name = record.name || "Patient";
+    const id = record.id || "—";
+    const isAarav = name === "Aarav Rao" || id === "LF-8841" || id === "PT-1001";
+    return `
+      <div class="patient-detail-summary">
+        <div><span class="record-index">PATIENT</span><h2>${esc(name)}</h2><p class="mono">${esc(id)}</p></div>
+        <span class="badge ${record.priority ? badgeClassForPriority(record.priority) : "badge-blue"}">${esc(record.status || "Registered")}</span>
+      </div>
+      <div class="patient-detail-grid">
+        <div><span>Age / Gender</span><strong>${esc(record.age ? `${record.age}${record.gender ? ` / ${record.gender}` : ""}` : "Not recorded")}</strong></div>
+        <div><span>Village / Area</span><strong>${esc(record.village || record.dept || "Not recorded")}</strong></div>
+        <div><span>Priority</span><strong>${esc(record.priority || "Not assigned")}</strong></div>
+        <div><span>Care status</span><strong>${esc(record.status || "Registered")}</strong></div>
+      </div>
+      ${isAarav ? `
+        <div class="patient-detail-section"><h3>Medical Overview</h3><div class="patient-detail-grid">
+          <div><span>Blood group</span><strong>O Negative</strong></div>
+          <div><span>Allergies</span><strong class="alert-text">Penicillin</strong></div>
+          <div><span>Major condition</span><strong>Type 1 Diabetes</strong></div>
+          <div><span>Current medication</span><strong>Insulin (Lantus)</strong></div>
+        </div></div>
+        <div class="patient-detail-section"><h3>Medical Records</h3><div class="record-mini-list">
+          <div><strong>Medical Vault</strong><span>${db.documents.length} stored documents</span></div>
+          <div><strong>Medical History</strong><span>4 key historical entries</span></div>
+          <div><strong>Prescriptions</strong><span>3 recorded prescriptions</span></div>
+          <div><strong>Reports &amp; Investigations</strong><span>${db.documents.filter(d => d.type === "Lab Reports" || d.type === "Imaging").length} lab/imaging documents</span></div>
+        </div></div>` : `
+        <div class="patient-detail-section"><h3>Record summary</h3><p class="section-note">Detailed medical information is not shown in the directory until the authorized record is opened and the relevant care context is available.</p></div>`}
+    `;
+  }
+
+  function openPatientDetail(record) {
+    const overlay = $("#patientDetailModalOverlay");
+    const body = $("#patientDetailBody");
+    const title = $("#patientDetailTitle");
+    if (!overlay || !body) return;
+    title.textContent = record.name || "Patient Details";
+    body.innerHTML = patientDetailHtml(record);
+    overlay.classList.add("open");
+    overlay.setAttribute("aria-hidden", "false");
+  }
+
+  function wirePatientDetailModal() {
+    const overlay = $("#patientDetailModalOverlay");
+    const close = $("#closePatientDetailModal");
+    if (!overlay || !close) return;
+    close.addEventListener("click", () => { overlay.classList.remove("open"); overlay.setAttribute("aria-hidden", "true"); });
+    overlay.addEventListener("click", e => { if (e.target === overlay) { overlay.classList.remove("open"); overlay.setAttribute("aria-hidden", "true"); } });
+    document.addEventListener("keydown", e => { if (e.key === "Escape" && overlay.classList.contains("open")) { overlay.classList.remove("open"); overlay.setAttribute("aria-hidden", "true"); } });
+  }
+
+  function renderAdminPatientDirectory() {
+    const el = $("#adminPatientDirectory");
+    if (!el) return;
+    const patients = db.patients.slice(0, 8);
+    el.innerHTML = patients.length ? patients.map(p => `
+      <button type="button" class="compact-patient-card" data-patient-record='${esc(JSON.stringify(p))}'>
+        <span class="compact-patient-name">${esc(p.name)}</span>
+      </button>`).join("") : `<div class="empty-state">No patient records available.</div>`;
+    $all(".compact-patient-card", el).forEach(btn => {
+      btn.addEventListener("click", () => {
+        let record = {};
+        try { record = JSON.parse(btn.dataset.patientRecord); } catch (e) {}
+        openPatientDetail(record);
+      });
+    });
+  }
+
   function renderVaultGrid() {
     const el = $("#vaultGrid");
     if (!el) return;
@@ -1364,10 +1460,13 @@
     const form = $("#uploadForm");
     if (!openBtn) return;
 
-    openBtn.addEventListener("click", () => {
+    const openUpload = () => {
       $("#uploadDate").value = todayStr();
       overlay.classList.add("open");
-    });
+    };
+    openBtn.addEventListener("click", openUpload);
+    const recordsUploadBtn = $("#recordsVaultUploadBtn");
+    if (recordsUploadBtn) recordsUploadBtn.addEventListener("click", openUpload);
     closeBtn.addEventListener("click", () => overlay.classList.remove("open"));
     overlay.addEventListener("click", (e) => { if (e.target === overlay) overlay.classList.remove("open"); });
 
@@ -1910,39 +2009,23 @@
   }
 
   function renderAshaPatientsTable() {
-    const tbody = $("#ashaPatientsTable tbody");
-    if (!tbody) return;
+    const grid = $("#ashaPatientsGrid");
+    if (!grid) return;
     let list = db.ashaPatients.slice();
     if (ashaPatientsFilter === "High") {
       list = list.filter(p => ["Maternal", "Children", "Elderly"].includes(p.riskCategory) || (p.conditions && p.conditions !== "None"));
     } else if (ashaPatientsFilter !== "all") {
       list = list.filter(p => p.riskCategory === ashaPatientsFilter);
     }
-    tbody.innerHTML = list.length ? list.map(p => {
-      const dueFollowUp = nextFollowUpForPatient(p.id);
-      return `
-      <tr>
-        <td><button type="button" class="btn-link-cell asha-patient-profile-link" data-pid="${esc(p.id)}"><strong>${esc(p.name)}</strong></button></td>
-        <td>${p.age} / ${esc(p.gender)}</td>
-        <td>${esc(p.village)}</td>
-        <td><span class="badge ${(!p.riskCategory || p.riskCategory === "Other") ? "badge-muted" : "badge-orange"}">${esc(p.riskCategory || "Other")}</span></td>
-        <td>${esc(p.lastVisit)}</td>
-        <td>${dueFollowUp ? `<span class="badge badge-yellow">${esc(dueFollowUp.dueLabel)}</span>` : "—"}</td>
-        <td>${esc(p.registeredBy || "Nurse Kulkarni")}</td>
-        <td><button class="btn btn-ghost btn-sm asha-patient-select-btn" data-pid="${esc(p.id)}">Check Urgency</button></td>
-      </tr>`;
-    }).join("") : `<tr class="empty-row"><td colspan="8">No patients match this filter.</td></tr>`;
-
-    $all(".asha-patient-select-btn", tbody).forEach(btn => {
+    grid.innerHTML = list.length ? list.map(p => `
+      <button type="button" class="compact-patient-card asha-compact-card" data-pid="${esc(p.id)}">
+        <span class="compact-patient-name">${esc(p.name)}</span>
+      </button>`).join("") : `<div class="empty-state">No patients match this filter.</div>`;
+    $all(".asha-compact-card", grid).forEach(btn => {
       btn.addEventListener("click", () => {
-        pendingAshaSelectedPatientId = btn.dataset.pid;
-        showView($("#portal-asha"), "asha-urgency");
-      });
-    });
-    $all(".asha-patient-profile-link", tbody).forEach(btn => {
-      btn.addEventListener("click", () => {
-        pendingAshaProfilePatientId = btn.dataset.pid;
-        showView($("#portal-asha"), "asha-patient-profile");
+        const patient = db.ashaPatients.find(p => p.id === btn.dataset.pid);
+        if (!patient) return;
+        openPatientDetail(patient);
       });
     });
   }
@@ -2590,6 +2673,7 @@
     wireRegistration();
     wireVaultFilters();
     wireUploadModal();
+    wirePatientDetailModal();
     wireVisitModal();
     wireAlertContacts();
     wireAmbulance();
@@ -2626,7 +2710,8 @@
 
     // Render the views that are active by default on first paint.
     renderHospitalDashboard();
-    renderVaultGrid();
+    renderMedicalRecords();
+    renderAdminPatientDirectory();
     renderAshaDashboard();
 
     setInterval(tickLiveQueue, 5000);

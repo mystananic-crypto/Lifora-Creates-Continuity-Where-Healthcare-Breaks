@@ -201,8 +201,8 @@ svg {
   top: 0;
   z-index: 1000;
   min-height: var(--topbar-h);
-  display: grid;
-  grid-template-columns: auto minmax(0, 1fr) auto;
+  display: flex;
+  justify-content: space-between;
   align-items: center;
   gap: 22px;
   padding: 0 26px;
@@ -2018,6 +2018,104 @@ button.help-card:hover {
 .tsum-total { background: var(--teal-100); border-color: var(--teal-200); }
 .tsum-total span, .tsum-total strong { color: var(--teal-800); }
 
+/* ASHA "Today's Priorities" — clickable task cards, colour-coded like the
+   triage summary above, but each is a real <button> that jumps to the
+   relevant filtered list (see renderAshaPriorityGrid in script.js). */
+.priority-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin: 4px 0 20px;
+}
+.priority-card {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+  padding: 14px 16px;
+  border-radius: var(--radius);
+  border: 1px solid var(--line);
+  background: var(--surface);
+  cursor: pointer;
+  text-align: left;
+  font-family: inherit;
+  transition: transform .12s ease, box-shadow .12s ease;
+}
+.priority-card:hover, .priority-card:focus-visible { transform: translateY(-1px); box-shadow: var(--shadow-sm, 0 2px 8px rgba(0,0,0,.08)); }
+.priority-card strong { font-family: var(--display); font-size: 30px; line-height: 1; }
+.priority-card span { font-size: 13px; font-weight: 700; color: var(--ink-2); }
+.priority-card.tone-red { background: var(--red-soft); border-color: #f3c3c7; }
+.priority-card.tone-red strong { color: var(--red-dark); }
+.priority-card.tone-orange { background: var(--orange-soft); border-color: #f3d6a3; }
+.priority-card.tone-orange strong { color: #8a5108; }
+.priority-card.tone-yellow { background: var(--yellow-soft); border-color: #ecdb9c; }
+.priority-card.tone-yellow strong { color: #876600; }
+.priority-card.tone-teal { background: var(--teal-100); border-color: var(--teal-200); }
+.priority-card.tone-teal strong { color: var(--teal-800); }
+
+.asha-now-card { background: var(--teal-100); border-color: var(--teal-200); margin-bottom: 18px; }
+.asha-now-card .eyebrow { color: var(--teal-800); }
+
+@media (max-width: 720px) {
+  .priority-grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 420px) {
+  .priority-grid { grid-template-columns: 1fr; }
+}
+
+/* My Families — household register cards */
+.household-list {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+.household-card {
+  display: block;
+  width: 100%;
+  text-align: left;
+  padding: 14px 16px;
+  border-radius: var(--radius);
+  border: 1px solid var(--line);
+  background: var(--surface);
+  cursor: pointer;
+  font-family: inherit;
+  transition: transform .12s ease, box-shadow .12s ease;
+}
+.household-card:hover, .household-card:focus-visible { transform: translateY(-1px); box-shadow: var(--shadow-sm); }
+.hh-card-top { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; }
+.hh-card-top strong { font-family: var(--display); font-size: 15px; }
+.hh-card-badges { display: flex; flex-wrap: wrap; gap: 6px; }
+
+.hh-member-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  padding: 10px 0;
+  border: none;
+  border-bottom: 1px solid var(--line);
+  background: none;
+  cursor: pointer;
+  text-align: left;
+  font-family: inherit;
+}
+.hh-member-row:last-child { border-bottom: none; }
+
+.clickable-row { cursor: pointer; }
+.clickable-row:hover { background: var(--surface-2); }
+
+.portal-nav-crosslink {
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px dashed var(--line);
+  font-style: italic;
+  opacity: .85;
+}
+
+@media (max-width: 640px) {
+  .household-list { grid-template-columns: 1fr; }
+}
+
 .triage-layout {
   display: grid;
   grid-template-columns: minmax(0, 1.25fr) minmax(300px, .75fr);
@@ -2767,127 +2865,154 @@ button.help-card:hover {
   border-color: var(--line);
 }
 
-/* -------------------- AUTH GATE (full-page login) -------------------- */
+/* -------------------- PORTAL SELECTION SCREEN (app entry point) --------------------
+   Mobile-first: base styles are the phone layout (cards stacked, full width);
+   the min-width query below is the only desktop enhancement (2-column grid). */
 
-body.pre-auth #app {
+/* Default state: no portal chosen yet — app shell is hidden, picker shows.
+   Single-direction rule (only a "hide" rule, no competing "show" override)
+   — the same reliable pattern the old auth gate used, since fighting CSS
+   specificity with two opposing rules is exactly what caused a bug here. */
+body:not(.portal-chosen) #app,
+body:not(.portal-chosen) header,
+body:not(.portal-chosen) .shell {
   display: none;
 }
 
-.auth-gate {
-  display: none;
+.portal-select-screen {
+  display: flex;
   position: fixed;
   inset: 0;
   z-index: 5000;
-  align-items: center;
+  align-items: flex-start;
   justify-content: center;
-  padding: 24px;
+  overflow-y: auto;
+  padding: 28px 16px 40px;
   background:
     radial-gradient(circle at 12% 10%, rgba(117, 225, 218, .16), transparent 26rem),
     radial-gradient(circle at 90% 90%, rgba(53, 143, 177, .16), transparent 26rem),
     var(--bg);
 }
 
-body.pre-auth .auth-gate {
-  display: flex;
+body.portal-chosen .portal-select-screen {
+  display: none;
 }
 
-.auth-card {
-  width: min(440px, 100%);
-  max-height: calc(100vh - 48px);
-  overflow-y: auto;
-  padding: 34px 30px;
-  background: #fff;
-  border: 1px solid var(--line);
-  border-radius: var(--radius-xl);
-  box-shadow: var(--shadow-lg);
+.portal-select-inner {
+  width: 100%;
+  max-width: 480px;
   text-align: center;
 }
 
-.auth-brand {
+.portal-select-brand {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  margin-bottom: 22px;
+  margin-bottom: 18px;
   color: var(--teal-800);
 }
-
-.auth-brand .logo-word {
+.portal-select-brand .logo-word {
   color: var(--ink);
   font-family: var(--display);
-  font-size: 29px;
+  font-size: 26px;
   font-weight: 700;
 }
 
-.auth-heading {
-  margin-bottom: 8px;
-  font-size: 28px;
-}
-
-.auth-card .login-method-switch,
-.auth-card .login-field,
-.auth-card #loginStepEntry,
-.auth-card #loginStepOtp {
-  text-align: left;
-}
-
-.auth-card .login-method-switch {
-  justify-content: center;
-}
-
-/* -------------------- LOGIN FIELD STYLES (shared by the auth gate) -------------------- */
-
-.login-method-switch {
-  display: flex;
-  gap: 8px;
-  margin-bottom: 18px;
-}
-
-.login-field {
+.portal-select-heading {
   margin-bottom: 6px;
+  font-size: clamp(20px, 5vw, 26px);
+}
+.portal-select-sub {
+  margin-bottom: 22px;
+  color: var(--muted);
+  font-size: 15px;
+  font-weight: 600;
 }
 
-.login-field label {
+.portal-card-list {
   display: flex;
   flex-direction: column;
-  gap: 7px;
-  color: var(--ink);
-  font-size: 16px;
-  font-weight: 800;
+  gap: 12px;
 }
 
-.login-field input {
+.portal-card {
+  display: flex;
+  align-items: center;
+  gap: 14px;
   width: 100%;
-  min-height: 50px;
-  padding: 12px 14px;
-  color: var(--ink);
-  background: #fbfdfd;
-  border: 1px solid var(--line-strong);
-  border-radius: 9px;
-  outline: none;
-  transition: var(--transition);
-}
-
-.login-field input:focus {
+  min-height: 74px;
+  padding: 14px 16px;
   background: #fff;
-  border-color: var(--teal);
-  box-shadow: 0 0 0 3px rgba(22, 156, 160, .11);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg, 16px);
+  box-shadow: var(--shadow-xs);
+  cursor: pointer;
+  text-align: left;
+  font-family: inherit;
+  transition: transform .12s ease, box-shadow .12s ease, border-color .12s ease;
+}
+.portal-card:hover,
+.portal-card:focus-visible {
+  transform: translateY(-1px);
+  border-color: var(--teal-300, var(--teal));
+  box-shadow: var(--shadow-md);
+}
+.portal-card:active { transform: translateY(0); }
+
+.portal-card-icon {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  font-size: 22px;
+  background: var(--teal-100);
+  border-radius: 12px;
 }
 
-.login-hint {
-  margin-top: 6px;
-  color: var(--muted);
+.portal-card-body {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+.portal-card-body strong {
+  font-family: var(--display);
   font-size: 16px;
+  color: var(--ink);
+}
+.portal-card-body span {
+  font-size: 13px;
+  color: var(--muted);
+  line-height: 1.35;
 }
 
-.login-hint .mono {
-  color: var(--teal-800);
-  font-weight: 700;
+.portal-select-lang {
+  margin-top: 26px;
+}
+.portal-select-footnote {
+  margin-top: 10px;
 }
 
-/* Sign In button in the topbar — toggles to a signed-in state */
-#signInBtn.is-signed-in {
-  color: #176e46;
-  background: var(--green-soft);
+/* Desktop enhancement only — base above is the mobile/default layout */
+@media (min-width: 768px) {
+  .portal-select-inner { max-width: 640px; }
+  .portal-card-list {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 14px;
+  }
+  .portal-card-list .portal-card:first-child { grid-column: 1 / -1; }
+}
+
+/* "← Change Portal" button in the topbar */
+.change-portal-btn {
+  margin-left: 4px;
+  white-space: nowrap;
+}
+@media (max-width: 640px) {
+  .change-portal-btn { font-size: 12px; padding: 7px 10px; }
 }
 
 /* -------------------- EMERGENCY OVERLAY -------------------- */
@@ -2972,31 +3097,8 @@ textarea:disabled {
 
 @media (max-width: 1250px) {
   .topbar {
-    grid-template-columns: auto 1fr;
     gap: 12px;
     padding-inline: 18px;
-  }
-
-  .topbar-right {
-    grid-column: 2;
-    grid-row: 1;
-    justify-self: end;
-  }
-
-  .portal-switcher {
-    grid-column: 1 / -1;
-    grid-row: 2;
-    justify-content: flex-start;
-    padding-bottom: 8px;
-  }
-
-  .topbar {
-    min-height: 130px;
-  }
-
-  .sidebar {
-    top: 130px;
-    height: calc(100vh - 130px);
   }
 
   .hero {
@@ -3025,7 +3127,7 @@ textarea:disabled {
 
   .sidebar {
     position: sticky;
-    top: 130px;
+    top: var(--topbar-h);
     height: auto;
     max-height: none;
     padding: 9px 14px;
@@ -3123,9 +3225,9 @@ textarea:disabled {
   .topbar {
     position: relative;
     min-height: auto;
-    grid-template-columns: 1fr auto;
     padding: 10px 12px;
     gap: 10px;
+    flex-wrap: wrap;
   }
 
   .topbar-left {
@@ -3134,11 +3236,6 @@ textarea:disabled {
 
   .logo {
     font-size: 27px;
-  }
-
-  .topbar-right {
-    grid-column: auto;
-    grid-row: auto;
   }
 
   .btn-emergency-mode {
@@ -3160,18 +3257,6 @@ textarea:disabled {
 
   .user-chip {
     padding-right: 5px;
-  }
-
-  .portal-switcher {
-    grid-column: 1 / -1;
-    grid-row: 2;
-    width: calc(100vw - 24px);
-    padding-bottom: 0;
-  }
-
-  .portal-switcher .pill {
-    padding-inline: 10px;
-    font-size: 15px;
   }
 
   .sidebar {
@@ -3928,14 +4013,6 @@ textarea:disabled {
 
   .logo {
     font-size: 24px;
-  }
-
-  .portal-switcher {
-    order: 3;
-    width: 100%;
-    padding: 6px 0;
-    gap: 4px;
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
   }
 
   .pill {

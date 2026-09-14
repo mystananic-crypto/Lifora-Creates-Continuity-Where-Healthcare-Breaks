@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Lifora — Community Healthcare Continuity &amp; Care Coordination Platform</title>
 <meta name="description" content="Lifora is a Community-Assisted Digital Healthcare Continuity and Care Coordination Platform designed for rural and underserved communities. Smart India Hackathon 2026 | SIH26133">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -10,7 +10,76 @@
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="styles.css">
 </head>
-<body class="pre-auth">
+<body>
+
+<!-- ============ PORTAL SELECTION — the app's actual entry screen. No
+     login/sign-up of any kind: choosing a portal IS how you enter Lifora.
+     Shown by default; hidden once a portal card (or a saved choice) opens
+     the shell. "← Change Portal" (in the topbar) brings it back. ============ -->
+<div class="portal-select-screen" id="portalSelectScreen">
+  <div class="portal-select-inner">
+    <div class="portal-select-brand">
+      <span class="logo-pulse" aria-hidden="true">
+        <svg viewBox="0 0 60 24" width="34" height="16"><polyline points="0,12 12,12 16,4 20,20 24,12 30,12 33,7 36,12 60,12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </span>
+      <span class="logo-word">Lifora</span>
+    </div>
+    <h1 class="portal-select-heading">Right Care. Right Place. Right Time.</h1>
+    <p class="portal-select-sub">Choose how you want to use Lifora.</p>
+
+    <div class="portal-card-list">
+      <button type="button" class="portal-card" data-select-portal="patient">
+        <span class="portal-card-icon" aria-hidden="true">👤</span>
+        <span class="portal-card-body">
+          <strong>Patient / Citizen</strong>
+          <span>Health records, referrals &amp; follow-up</span>
+        </span>
+      </button>
+
+      <button type="button" class="portal-card" data-select-portal="asha">
+        <span class="portal-card-icon" aria-hidden="true">🧑‍⚕️</span>
+        <span class="portal-card-body">
+          <strong>ASHA</strong>
+          <span>Village visits, households &amp; community follow-up</span>
+        </span>
+      </button>
+
+      <button type="button" class="portal-card" data-select-portal="nurse">
+        <span class="portal-card-icon" aria-hidden="true">👩‍⚕️</span>
+        <span class="portal-card-body">
+          <strong>Nurse</strong>
+          <span>Patient care, clinical tasks &amp; handover</span>
+        </span>
+      </button>
+
+      <button type="button" class="portal-card" data-select-portal="hospital">
+        <span class="portal-card-icon" aria-hidden="true">🏥</span>
+        <span class="portal-card-body">
+          <strong>Hospital / Admin</strong>
+          <span>Hospital operations, patients &amp; coordination</span>
+        </span>
+      </button>
+
+      <button type="button" class="portal-card" data-select-portal="resource">
+        <span class="portal-card-icon" aria-hidden="true">🚑</span>
+        <span class="portal-card-body">
+          <strong>Healthcare Services</strong>
+          <span>ICU beds, ambulance, blood &amp; nearby care</span>
+        </span>
+      </button>
+    </div>
+
+    <div class="portal-select-lang">
+      <label for="portalSelectLangSelect" class="sr-only">Language</label>
+      <select id="portalSelectLangSelect" class="lang-select" aria-label="Select Language">
+        <option value="en">English</option>
+        <option value="hi">हिन्दी (Hindi)</option>
+        <option value="gu">ગુજરાતી (Gujarati)</option>
+      </select>
+    </div>
+    <p class="section-note portal-select-footnote">This is a prototype. All data shown is simulated demo data.</p>
+  </div>
+</div>
 
 <div id="app">
 
@@ -26,17 +95,8 @@
         </span>
         <span class="logo-word">Lifora</span>
       </a>
+      <button class="btn btn-ghost btn-sm change-portal-btn" id="changePortalBtn" data-i18n="change_portal">← Change Portal</button>
     </div>
-
-    <nav class="portal-switcher" aria-label="Portal switcher">
-      <button class="pill active" data-portal-link="public" data-i18n="portal_public">Public</button>
-      <button class="pill" data-portal-link="patient" data-i18n="portal_patient">Patient</button>
-      <button class="pill" data-portal-link="asha" data-i18n="portal_asha">Health Worker</button>
-      <button class="pill" data-portal-link="hospital" data-i18n="portal_hospital">Healthcare Staff</button>
-      <button class="pill" data-portal-link="ambulance" data-i18n="portal_ambulance">Ambulance</button>
-      <button class="pill" data-portal-link="resource" data-i18n="portal_resource">Resource</button>
-      <button class="pill" data-portal-link="admin" data-i18n="portal_admin">Admin</button>
-    </nav>
 
     <div class="topbar-right">
       <div class="lang-selector-wrap">
@@ -48,10 +108,10 @@
         </select>
       </div>
       <span class="network-status" id="networkStatus" title="Connection status"><span class="network-dot"></span><span id="networkStatusLabel" data-i18n="network_connected">Connected</span></span>
+      <button class="btn btn-ghost btn-sm" id="cloudSyncBtn" title="Push/pull shared data with the cloud backend">☁ Sync</button>
       <button class="btn btn-emergency-mode" id="emergencyModeBtn" title="Toggle Emergency Mode">
         <span class="dot-pulse"></span> <span data-i18n="emergency_mode_btn">Emergency Mode</span>
       </button>
-      <button class="btn btn-secondary btn-sm" id="signInBtn" data-i18n="sign_in">Sign In</button>
       <div class="user-chip">
         <span class="avatar">AR</span>
         <span class="user-meta">
@@ -698,9 +758,10 @@
     <!-- ============================================================ -->
     <section class="portal-section" id="portal-asha" data-portal="asha">
       <aside class="sidebar">
-        <div class="sidebar-title">Health Worker</div>
+        <div class="sidebar-title" data-i18n="asha_portal_title">ASHA Worker Portal</div>
         <nav class="portal-nav">
-          <a href="#" data-view="asha-dashboard" class="active">Dashboard</a>
+          <a href="#" data-view="asha-dashboard" class="active">Today's Priorities</a>
+          <a href="#" data-view="asha-households">My Families</a>
           <a href="#" data-view="asha-register">Register Patient</a>
           <a href="#" data-view="asha-patients">Patients</a>
           <a href="#" data-view="asha-urgency">Priority Assessment</a>
@@ -712,29 +773,22 @@
 
       <main class="content">
 
-        <!-- DASHBOARD -->
+        <!-- TODAY'S PRIORITIES (ASHA landing screen) -->
         <div class="view active" id="view-asha-dashboard">
-          <div class="page-head"><span class="eyebrow">Community Health Worker</span><h1>Good morning, Nurse Kulkarni</h1></div>
+          <div class="page-head"><span class="eyebrow">ASHA · Community Health Worker</span><h1>What do I need to do today?</h1></div>
 
-          <div class="triage-summary" id="ashaKpis"></div>
-
-          <div class="card card-wide">
-            <h3>Quick actions</h3>
-            <div class="quick-actions">
-              <button class="btn btn-primary" data-view-jump="asha-register">Register Patient</button>
-              <button class="btn btn-secondary" data-view-jump="asha-patients">Find Patient</button>
-              <button class="btn btn-secondary" data-view-jump="asha-urgency">Priority Assessment</button>
-              <button class="btn btn-secondary" data-view-jump="asha-referrals">Referrals</button>
-              <button class="btn btn-secondary" data-view-jump="asha-followups">Follow-Ups</button>
-              <button class="btn btn-emergency" data-view-jump="asha-emergency">Emergency</button>
-            </div>
+          <div class="card card-wide asha-now-card" id="ashaDoNowCard">
+            <span class="eyebrow">⭐ What should I do now?</span>
+            <div id="ashaDoNowBody"></div>
           </div>
+
+          <div class="priority-grid" id="ashaPriorityGrid"></div>
 
           <div class="card card-wide offline-demo-card">
             <div class="split-head" style="margin-bottom:4px;">
               <div>
                 <h3 style="margin-bottom:2px;">Low-connectivity mode</h3>
-                <p class="section-note">Community visits often happen with poor or no signal. This simulates that: while offline mode is on, new patient registrations are saved on this device and queued instead of sent immediately.</p>
+                <p class="section-note">Community visits often happen with poor or no signal. This simulates that: while offline mode is on, new registrations and visit records are saved on this device and queued instead of sent immediately.</p>
               </div>
               <button class="btn btn-ghost btn-sm" id="ashaOfflineToggle">📡 Simulate Offline Mode</button>
             </div>
@@ -745,8 +799,83 @@
           </div>
 
           <div class="card card-wide">
+            <h3>Quick actions</h3>
+            <div class="quick-actions">
+              <button class="btn btn-primary" data-view-jump="asha-households">My Families</button>
+              <button class="btn btn-secondary" data-view-jump="asha-register">Register Patient</button>
+              <button class="btn btn-secondary" data-view-jump="asha-patients">Find Patient</button>
+              <button class="btn btn-secondary" data-view-jump="asha-urgency">Priority Assessment</button>
+              <button class="btn btn-secondary" data-view-jump="asha-referrals">Referrals</button>
+              <button class="btn btn-secondary" data-view-jump="asha-followups">Follow-Ups</button>
+              <button class="btn btn-emergency" data-view-jump="asha-emergency">Emergency</button>
+            </div>
+          </div>
+
+          <div class="card card-wide">
             <h3>Follow-ups due today</h3>
             <div id="ashaFollowupsPreview"></div>
+          </div>
+        </div>
+
+        <!-- MY FAMILIES — Digital Household Register -->
+        <div class="view" id="view-asha-households">
+          <div class="page-head"><span class="eyebrow">Digital Household Register</span><h1>My Families</h1></div>
+
+          <div class="card card-wide" style="margin-bottom:16px;">
+            <label class="span-2" style="display:block;">
+              <span style="display:block;font-size:11px;font-weight:800;color:var(--ink-2);margin-bottom:6px;">Search households</span>
+              <input type="text" id="ashaHouseholdSearch" placeholder="Name, household ID, phone, or village">
+            </label>
+            <div class="vault-filters" id="ashaHouseholdFilters" style="margin-top:12px;">
+              <button type="button" class="chip active" data-hh-filter="all">All</button>
+              <button type="button" class="chip" data-hh-filter="pregnant">Pregnant</button>
+              <button type="button" class="chip" data-hh-filter="newborn">Newborn</button>
+              <button type="button" class="chip" data-hh-filter="high-risk">High risk</button>
+              <button type="button" class="chip" data-hh-filter="referral">Referral pending</button>
+            </div>
+          </div>
+
+          <div class="household-list" id="ashaHouseholdList"></div>
+        </div>
+
+        <!-- HOUSEHOLD PROFILE -->
+        <div class="view" id="view-asha-household-profile">
+          <div class="page-head split-head">
+            <div><span class="eyebrow" id="ashaHHEyebrow">Household</span><h1 id="ashaHHName">—</h1></div>
+            <button class="btn btn-ghost btn-sm" data-view-jump="asha-households">← Back to My Families</button>
+          </div>
+
+          <div class="dash-grid">
+            <div class="card card-wide" id="ashaHHInfo"></div>
+
+            <div class="card card-wide" id="ashaHHAlerts"></div>
+
+            <div class="card card-wide">
+              <div class="split-head" style="margin-bottom:10px;">
+                <h3 style="margin:0;">Members</h3>
+                <button class="btn btn-primary btn-sm" id="ashaHHStartVisit">Start Home Visit</button>
+              </div>
+              <div id="ashaHHMemberChooser" style="display:none;margin-bottom:14px;padding:12px;background:var(--bg-soft);border-radius:10px;">
+                <p class="section-note" style="margin-bottom:8px;">Who is this visit for?</p>
+                <div class="quick-actions" id="ashaHHMemberChooserList"></div>
+              </div>
+              <div id="ashaHHMembers"></div>
+            </div>
+
+            <div class="card card-wide">
+              <h3>Visit History</h3>
+              <ul class="timeline" id="ashaHHVisitHistory"></ul>
+            </div>
+
+            <div class="card card-wide">
+              <h3>Referrals</h3>
+              <div class="table-wrap">
+                <table class="data-table" id="ashaHHReferralsTable">
+                  <thead><tr><th>Patient</th><th>Facility</th><th>Urgency</th><th>Status</th></tr></thead>
+                  <tbody></tbody>
+                </table>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -980,11 +1109,108 @@
     </section>
 
     <!-- ============================================================ -->
-    <!-- HOSPITAL / HEALTHCARE STAFF PORTAL -->
+    <!-- NURSE PORTAL -->
     <!-- ============================================================ -->
+    <section class="portal-section" id="portal-nurse" data-portal="nurse">
+      <aside class="sidebar">
+        <div class="sidebar-title">Nurse</div>
+        <nav class="portal-nav">
+          <a href="#" data-view="n-dashboard" class="active">Dashboard</a>
+          <a href="#" data-view="n-patients">Assigned Patients</a>
+          <a href="#" data-view="n-patient-profile" style="display:none;">Patient Profile</a>
+          <a href="#" data-view="n-tasks">Care Tasks</a>
+          <a href="#" data-view="n-handover">Handover</a>
+        </nav>
+      </aside>
+
+      <main class="content">
+
+        <!-- DASHBOARD -->
+        <div class="view active" id="view-n-dashboard">
+          <div class="page-head"><span class="eyebrow">Nurse · Patient Care</span><h1>Which patients and tasks need my attention?</h1></div>
+          <div class="priority-grid" id="nursePriorityGrid"></div>
+
+          <div class="card card-wide">
+            <h3>Quick actions</h3>
+            <div class="quick-actions">
+              <button class="btn btn-primary" data-view-jump="n-patients">Assigned Patients</button>
+              <button class="btn btn-secondary" data-view-jump="n-tasks">Care Tasks</button>
+              <button class="btn btn-secondary" data-view-jump="n-handover">Handover</button>
+            </div>
+          </div>
+
+          <div class="card card-wide">
+            <h3>Clinical alerts</h3>
+            <div id="nurseAlertsPreview"></div>
+          </div>
+        </div>
+
+        <!-- ASSIGNED PATIENTS -->
+        <div class="view" id="view-n-patients">
+          <div class="page-head"><span class="eyebrow">Nurse</span><h1>Assigned Patients</h1></div>
+          <div class="table-wrap">
+            <table class="data-table" id="nursePatientsTable">
+              <thead><tr><th>Patient</th><th>Dept.</th><th>Priority</th><th>Status</th><th>Waiting</th></tr></thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- PATIENT PROFILE -->
+        <div class="view" id="view-n-patient-profile">
+          <div class="page-head split-head">
+            <div><span class="eyebrow">Nurse</span><h1 id="nurseProfileName">—</h1></div>
+            <button class="btn btn-ghost btn-sm" data-view-jump="n-patients">← Back to Patients</button>
+          </div>
+          <div class="dash-grid">
+            <div class="card card-wide" id="nurseProfileInfo"></div>
+            <div class="card card-wide">
+              <h3>Care Tasks for this patient</h3>
+              <div id="nurseProfileTasks"></div>
+            </div>
+            <div class="card card-wide">
+              <h3>Nursing Notes</h3>
+              <div id="nurseProfileNotes" style="margin-bottom:12px;"></div>
+              <form id="nurseNoteForm" class="form-grid">
+                <label class="span-2">Add a note<textarea id="nurseNoteInput" rows="2" placeholder="Observation, care given, patient response…"></textarea></label>
+                <button class="btn btn-primary span-2" type="submit">Save note</button>
+              </form>
+            </div>
+          </div>
+        </div>
+
+        <!-- CARE TASKS -->
+        <div class="view" id="view-n-tasks">
+          <div class="page-head"><span class="eyebrow">Nurse</span><h1>Care Tasks</h1></div>
+          <div class="vault-filters" id="nurseTaskFilters">
+            <button type="button" class="chip active" data-task-filter="all">All</button>
+            <button type="button" class="chip" data-task-filter="Medication">Medication</button>
+            <button type="button" class="chip" data-task-filter="Vitals Check">Vitals</button>
+            <button type="button" class="chip" data-task-filter="Handover">Handover</button>
+            <button type="button" class="chip" data-task-filter="Discharge Prep">Discharge Prep</button>
+          </div>
+          <div id="nurseTaskList"></div>
+        </div>
+
+        <!-- HANDOVER -->
+        <div class="view" id="view-n-handover">
+          <div class="page-head"><span class="eyebrow">Nurse</span><h1>Shift Handover</h1></div>
+          <div class="card card-wide" id="nurseHandoverSummary"></div>
+          <div class="card card-wide">
+            <h3>Outgoing note for the next shift</h3>
+            <form id="nurseHandoverForm" class="form-grid">
+              <label class="span-2"><textarea id="nurseHandoverInput" rows="3" placeholder="Anything the next nurse should know…"></textarea></label>
+              <button class="btn btn-primary span-2" type="submit">Save handover note</button>
+            </form>
+          </div>
+        </div>
+
+      </main>
+    </section>
+
     <section class="portal-section" id="portal-hospital" data-portal="hospital">
       <aside class="sidebar">
-        <div class="sidebar-title">Healthcare Staff</div>
+        <div class="sidebar-title">Hospital / Admin</div>
         <nav class="portal-nav">
           <a href="#" data-view="h-dashboard" class="active">Dashboard</a>
           <a href="#" data-view="h-referrals">Incoming Referrals</a>
@@ -999,6 +1225,7 @@
           <a href="#" data-view="h-records">Medical Records</a>
           <a href="#" data-view="h-contacts">Emergency Contacts</a>
           <a href="#" data-view="h-notifications">Notifications</a>
+          <a href="#" data-portal-link="admin" class="portal-nav-crosslink">Admin Overview →</a>
         </nav>
       </aside>
 
@@ -1246,6 +1473,7 @@
           <a href="#" data-view="a-vitals">Vitals</a>
           <a href="#" data-view="a-eta">ETA</a>
           <a href="#" data-view="a-handover">Hospital Handover</a>
+          <a href="#" data-portal-link="resource" class="portal-nav-crosslink">← Healthcare Services</a>
         </nav>
       </aside>
       <main class="content">
@@ -1310,12 +1538,13 @@
     <!-- ============================================================ -->
     <section class="portal-section" id="portal-resource" data-portal="resource">
       <aside class="sidebar">
-        <div class="sidebar-title">Resource Staff</div>
+        <div class="sidebar-title">Healthcare Services</div>
         <nav class="portal-nav">
           <a href="#" data-view="r-availability" class="active">Blood Availability</a>
           <a href="#" data-view="r-medicines">Essential Medicines</a>
           <a href="#" data-view="r-bank">Blood Bank</a>
           <a href="#" data-view="r-resources">Emergency Resources</a>
+          <a href="#" data-portal-link="ambulance" class="portal-nav-crosslink">Ambulance →</a>
         </nav>
       </aside>
       <main class="content">
@@ -1373,13 +1602,14 @@
     <!-- ============================================================ -->
     <section class="portal-section" id="portal-admin" data-portal="admin">
       <aside class="sidebar">
-        <div class="sidebar-title">Admin</div>
+        <div class="sidebar-title">Hospital / Admin</div>
         <nav class="portal-nav">
           <a href="#" data-view="ad-analytics" class="active">Hospital Analytics</a>
           <a href="#" data-view="ad-staff">Staff Management</a>
           <a href="#" data-view="ad-beds">Bed Management</a>
           <a href="#" data-view="ad-audit">Audit Logs</a>
           <a href="#" data-view="ad-settings">System Settings</a>
+          <a href="#" data-portal-link="hospital" class="portal-nav-crosslink">← Hospital Dashboard</a>
         </nav>
       </aside>
       <main class="content">
@@ -1504,69 +1734,6 @@
   </div>
 </div>
 
-<!-- ============ AUTH GATE — full-page login (Phone / Email OTP simulation) ============
-     Nothing else in the app is visible until this is passed. Controlled by
-     a "pre-auth" class on <body>, not by open/close toggling. ============ -->
-<div class="auth-gate" id="authGate">
-  <div class="auth-card">
-    <div class="auth-top-bar" style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">
-      <div class="auth-brand">
-        <span class="logo-pulse" aria-hidden="true">
-          <svg viewBox="0 0 60 24" width="34" height="16"><polyline points="0,12 12,12 16,4 20,20 24,12 30,12 33,7 36,12 60,12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        </span>
-        <span class="logo-word">Lifora</span>
-      </div>
-      <div class="auth-lang-picker">
-        <select class="lang-select auth-lang-select" onchange="document.getElementById('globalLangSelect').value=this.value; document.getElementById('globalLangSelect').dispatchEvent(new Event('change'));" aria-label="Select Language">
-          <option value="en">English</option>
-          <option value="hi">हिन्दी (Hindi)</option>
-          <option value="gu">ગુજરાતી (Gujarati)</option>
-        </select>
-      </div>
-    </div>
-    <h1 class="auth-heading" data-i18n="login_subtitle">Right Care. Right Place. Right Time.</h1>
-    <p class="section-note" style="margin-bottom:14px;" data-i18n="login_demo_note">Prototype login simulation — no real SMS or email is sent. Use one of the demo accounts below to try it.</p>
-
-    <button class="btn btn-secondary" id="quickDemoSignInBtn" style="width:100%;margin-bottom:16px;background:var(--teal-100);border:1.5px solid var(--teal-700);color:var(--teal-950);font-weight:700;padding:11px 16px;" data-i18n="login_quick_demo">⚡ Quick Demo Sign In (1-Click Access)</button>
-
-    <div class="login-method-switch">
-      <button class="chip active" data-method="phone" data-i18n="login_phone_tab">📱 Phone</button>
-      <button class="chip" data-method="email" data-i18n="login_email_tab">✉️ Email</button>
-    </div>
-
-    <!-- STEP 1: enter phone or email -->
-    <div id="loginStepEntry">
-      <div class="login-field" id="loginPhoneField">
-        <label><span data-i18n="login_phone_label">Phone number</span><input type="tel" id="loginPhoneInput" placeholder="10-digit number" data-i18n-placeholder="login_phone_placeholder" inputmode="numeric" maxlength="10"></label>
-        <p class="login-hint"><span data-i18n="login_phone_hint">Demo number:</span> <span class="mono">9265470008</span> (OTP: <span class="mono">140706</span>)</p>
-      </div>
-      <div class="login-field" id="loginEmailField" style="display:none;">
-        <label><span data-i18n="login_email_label">Email address</span><input type="email" id="loginEmailInput" placeholder="you@example.com" data-i18n-placeholder="login_email_placeholder"></label>
-        <p class="login-hint"><span data-i18n="login_email_hint">Demo email:</span> <span class="mono">PS21058@gmail.com</span> (OTP: <span class="mono">041005</span>)</p>
-      </div>
-      <button class="btn btn-primary" id="sendOtpBtn" style="width:100%;margin-top:6px;" data-i18n="login_send_otp">Send OTP</button>
-    </div>
-
-    <!-- STEP 2: enter OTP -->
-    <div id="loginStepOtp" style="display:none;">
-      <p class="section-note" id="otpSentTo" style="margin-bottom:12px;"></p>
-      <div class="login-field">
-        <label><span data-i18n="login_enter_otp">Enter OTP</span><input type="text" id="loginOtpInput" maxlength="6" inputmode="numeric" placeholder="6-digit code" data-i18n-placeholder="login_otp_placeholder"></label>
-        <p class="login-hint" id="otpHint"></p>
-      </div>
-      <button class="btn btn-primary" id="verifyOtpBtn" style="width:100%;margin-top:10px;" data-i18n="login_verify">Verify &amp; sign in</button>
-      <button class="btn btn-ghost btn-sm" id="changeLoginMethodBtn" style="width:100%;margin-top:8px;" data-i18n="login_change_method">← Use a different number/email</button>
-    </div>
-
-    <p class="section-note" id="loginError" style="color:var(--red-dark);margin-top:12px;min-height:14px;"></p>
-
-    <!-- ASHA / Community Health Worker Assistance Help Note -->
-    <div class="auth-asha-help" style="margin-top:16px;padding:10px 12px;background:var(--bg-soft);border:1px dashed var(--line-strong);border-radius:10px;text-align:center;">
-      <p class="section-note" style="margin:0;font-size:13px;" data-i18n="login_asha_help">Need help using Lifora? Your ASHA / community health worker can assist you.</p>
-    </div>
-  </div>
-</div>
-
 <!-- ============ RECORD VISIT MODAL (Health Worker portal) ============ -->
 <div class="modal-overlay" id="visitModalOverlay">
   <div class="modal">
@@ -1575,6 +1742,22 @@
       <button class="icon-btn" id="closeVisitModal">✕</button>
     </div>
     <form class="form-grid" id="visitForm">
+      <label class="span-2">Reason for visit
+        <select id="visitReason">
+          <option>Routine follow-up</option>
+          <option>Pregnancy</option>
+          <option>Postnatal</option>
+          <option>Newborn</option>
+          <option>Child health</option>
+          <option>Immunisation</option>
+          <option>Nutrition</option>
+          <option>Illness</option>
+          <option>NCD</option>
+          <option>Referral follow-up</option>
+          <option>Elderly</option>
+          <option>Other</option>
+        </select>
+      </label>
       <label>Blood pressure<input type="text" id="visitBP" placeholder="e.g. 120/80"></label>
       <label>Pulse (bpm)<input type="number" id="visitPulse" placeholder="e.g. 78"></label>
       <label>Temperature (°F)<input type="number" id="visitTemp" step="0.1" placeholder="e.g. 98.6"></label>
@@ -1619,5 +1802,15 @@
 <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js"></script>
 <script src="script.js"></script>
+
+<!-- ============ CLOUD BACKEND (Supabase) — optional, additive ============
+     Load order matters: script.js first (exposes window.LiforaApp), then
+     the Supabase library, then your own keys, then the sync logic that
+     uses all three. If you haven't set up Supabase yet, these three still
+     load safely — the "☁ Sync" button will just tell you it isn't
+     connected yet instead of erroring. ============ -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="supabase-config.js"></script>
+<script src="cloud-sync.js"></script>
 </body>
 </html>

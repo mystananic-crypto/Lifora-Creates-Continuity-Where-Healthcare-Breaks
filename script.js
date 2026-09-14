@@ -48,10 +48,11 @@
       /* --- Portal switcher --- */
       portal_public: "Public",
       portal_patient: "Patient",
-      portal_asha: "Health Worker",
-      portal_hospital: "Healthcare Staff",
+      portal_asha: "ASHA",
+      portal_hospital: "Hospital / Admin",
+      portal_nurse: "Nurse",
       portal_ambulance: "Ambulance",
-      portal_resource: "Resource",
+      portal_resource: "Healthcare Services",
       portal_admin: "Admin",
 
       /* --- Network status --- */
@@ -63,7 +64,7 @@
       emergency_mode_btn: "Emergency Mode",
 
       /* --- Topbar / header --- */
-      sign_in: "Sign In",
+      change_portal: "← Change Portal",
       signed_in: "✓ Signed in",
 
       /* --- PUBLIC PORTAL nav --- */
@@ -220,7 +221,7 @@
       profile_saved: "✅ Profile changes saved.",
 
       /* --- ASHA / Health Worker portal nav --- */
-      asha_portal_title: "Health Worker",
+      asha_portal_title: "ASHA Worker Portal",
       asha_nav_dashboard: "Dashboard",
       asha_nav_help_patient: "Help a Patient",
       asha_nav_register: "Register Patient",
@@ -507,10 +508,11 @@
       /* --- Portal switcher --- */
       portal_public: "सार्वजनिक",
       portal_patient: "मरीज",
-      portal_asha: "स्वास्थ्य कार्यकर्ता",
-      portal_hospital: "स्वास्थ्य कर्मचारी",
+      portal_asha: "ASHA",
+      portal_hospital: "अस्पताल / प्रशासन",
+      portal_nurse: "नर्स",
       portal_ambulance: "एम्बुलेंस",
-      portal_resource: "संसाधन",
+      portal_resource: "स्वास्थ्य सेवाएं",
       portal_admin: "प्रशासक",
 
       /* --- Network status --- */
@@ -522,7 +524,7 @@
       emergency_mode_btn: "आपातकाल मोड",
 
       /* --- Topbar --- */
-      sign_in: "साइन इन",
+      change_portal: "← पोर्टल बदलें",
       signed_in: "✓ साइन इन हो गए",
 
       /* --- PUBLIC PORTAL nav --- */
@@ -679,7 +681,7 @@
       profile_saved: "✅ प्रोफाइल बदलाव सेव हो गए।",
 
       /* --- ASHA portal --- */
-      asha_portal_title: "स्वास्थ्य कार्यकर्ता",
+      asha_portal_title: "ASHA वर्कर पोर्टल",
       asha_nav_dashboard: "डैशबोर्ड",
       asha_nav_help_patient: "मरीज की मदद करें",
       asha_nav_register: "मरीज पंजीकरण",
@@ -966,10 +968,11 @@
       /* --- Portal switcher --- */
       portal_public: "જાહેર",
       portal_patient: "દર્દી",
-      portal_asha: "આરોગ્ય કાર્યકર",
-      portal_hospital: "આરોગ્ય કર્મચારી",
+      portal_asha: "ASHA",
+      portal_hospital: "હોસ્પિટલ / એડમિન",
+      portal_nurse: "નર્સ",
       portal_ambulance: "એમ્બ્યુલન્સ",
-      portal_resource: "સંસાધન",
+      portal_resource: "આરોગ્ય સેવાઓ",
       portal_admin: "એડમિન",
 
       /* --- Network status --- */
@@ -981,7 +984,7 @@
       emergency_mode_btn: "આપત્કાલ મોડ",
 
       /* --- Topbar --- */
-      sign_in: "સાઇન ઇન",
+      change_portal: "← પોર્ટલ બદલો",
       signed_in: "✓ સાઇન ઇન થઈ ગયા",
 
       /* --- PUBLIC PORTAL nav --- */
@@ -1138,7 +1141,7 @@
       profile_saved: "✅ प्रोफाइल बदलाव साचवाया.",
 
       /* --- ASHA portal --- */
-      asha_portal_title: "आरोग्य कार्यकर",
+      asha_portal_title: "ASHA वर्कर पोर्टल",
       asha_nav_dashboard: "डेशबोर्ड",
       asha_nav_help_patient: "दर्दीनी मदद करो",
       asha_nav_register: "दर्दी नोंधणी",
@@ -1516,6 +1519,18 @@
       { title: "Emergency contact notified", meta: "Meera Rao (Spouse) · SMS + Call", time: Date.now() - 1000 * 60 * 9 }
     ],
 
+    // ---- Nurse portal — care tasks against the same shared patient queue
+    // used by Hospital/Admin, so a task always points at a real patient.
+    nurseTasks: [
+      { id: "NT-01", patientId: "LF-8841", patientName: "Aarav Rao", type: "Medication", detail: "Insulin (Lantus) 10 units, subcutaneous", dueTime: "14:00", status: "Due" },
+      { id: "NT-02", patientId: "LF-1190", patientName: "Priya Nair", type: "Vitals Check", detail: "Routine 4-hourly vitals recheck", dueTime: "14:30", status: "Due" },
+      { id: "NT-03", patientId: "LF-9021", patientName: "Fatima Sheikh", type: "Medication", detail: "Paracetamol 500mg, oral", dueTime: "14:45", status: "Due" },
+      { id: "NT-04", patientId: "LF-3387", patientName: "Devraj Singh", type: "Handover", detail: "Prepare shift handover notes", dueTime: "15:00", status: "Pending" },
+      { id: "NT-05", patientId: "LF-6602", patientName: "Sara Thomas", type: "Discharge Prep", detail: "Discharge paperwork & patient/family education", dueTime: "15:30", status: "Pending" }
+    ],
+    nurseNotes: {},
+    handoverNote: "",
+
     wards: [
       { name: "Emergency", total: 12, occupied: 8, reserved: 1 },
       { name: "ICU", total: 10, occupied: 8, reserved: 1 },
@@ -1547,10 +1562,11 @@
     ],
 
     // ---- ASHA / Community Health Worker data ----------------------------
+    village: { name: "Shantipur", asha: "Meena Patel" },
     ashaPatients: [
       {
         id: "AP-1001", name: "Lakshmi Devi", age: 62, gender: "Female", phone: "9876500001",
-        village: "Demo Village", emergencyContact: "Ramesh Devi (Son) · 9876500002",
+        village: "Demo Village", emergencyContact: "Ramesh Devi (Son) · 9876500002", householdId: "HH-01",
         bloodGroup: "O Positive", allergies: "None known", conditions: "Hypertension, Type 2 Diabetes", medicines: "Amlodipine 5mg, Metformin 500mg",
         vitals: { bp: "158/96", pulse: 88, temp: 98.6, spo2: 96, resp: 19, weight: 58, sugar: 210 },
         symptoms: "Weakness, Dizziness", riskCategory: "Elderly", lastVisit: "2026-01-18", registeredBy: "Nurse Kulkarni",
@@ -1561,7 +1577,7 @@
       },
       {
         id: "AP-1002", name: "Bhura Singh", age: 68, gender: "Male", phone: "9876500003",
-        village: "Rampura", emergencyContact: "Meena Singh · 9876500004",
+        village: "Rampura", emergencyContact: "Meena Singh · 9876500004", householdId: "HH-02",
         bloodGroup: "B Positive", allergies: "Penicillin", conditions: "Hypertension, Type 2 Diabetes", medicines: "Metformin, Amlodipine",
         vitals: { bp: "148/94", pulse: 92, temp: 98.2, spo2: 95, resp: 20, weight: 71, sugar: 190 },
         symptoms: "Dizziness, elevated blood pressure", riskCategory: "Elderly", lastVisit: "2026-01-15", registeredBy: "Nurse Kulkarni",
@@ -1572,15 +1588,49 @@
       },
       {
         id: "AP-1003", name: "Kiran Patel", age: 6, gender: "Female", phone: "9876500005",
-        village: "Sundarpur", emergencyContact: "Dipak Patel · 9876500006",
+        village: "Sundarpur", emergencyContact: "Dipak Patel · 9876500006", householdId: "HH-03",
         bloodGroup: "A Positive", allergies: "None known", conditions: "None", medicines: "None",
         vitals: { bp: "96/60", pulse: 104, temp: 99.1, spo2: 97, resp: 22, weight: 19, sugar: 95 },
         symptoms: "Mild fever, cough", riskCategory: "Children", lastVisit: "2026-01-10", registeredBy: "Nurse Kulkarni",
         visits: [
           { date: "2026-01-10", vitals: { bp: "96/60", pulse: 104, temp: 99.1, spo2: 97, resp: 22, weight: 19, sugar: 95 }, notes: "Mild fever, cough", recordedBy: "Nurse Kulkarni" }
         ]
+      },
+      {
+        id: "AP-1004", name: "Rina Patel", age: 27, gender: "Female", phone: "9876500007",
+        village: "Rampura", emergencyContact: "Suresh Patel (Husband) · 9876500008", householdId: "HH-04",
+        bloodGroup: "B Positive", allergies: "None known", conditions: "None", medicines: "Iron & Folic Acid",
+        vitals: { bp: "150/100", pulse: 90, temp: 98.4, spo2: 97, resp: 18, weight: 64, sugar: 0 },
+        symptoms: "Swelling in feet, occasional headache", riskCategory: "Maternal", lastVisit: "2026-01-19", registeredBy: "Meena Patel",
+        pregnant: true, gestationWeeks: 32, edd: "2026-03-10", ancVisits: 4,
+        visits: [
+          { date: "2025-12-20", vitals: { bp: "128/84", pulse: 82, temp: 98.2, spo2: 98, resp: 17, weight: 61, sugar: 0 }, notes: "Routine ANC follow-up — 28 weeks. No concerns.", recordedBy: "Meena Patel" },
+          { date: "2026-01-19", vitals: { bp: "150/100", pulse: 90, temp: 98.4, spo2: 97, resp: 18, weight: 64, sugar: 0 }, notes: "32 weeks. Reports swelling in feet and occasional headache. BP elevated.", recordedBy: "Meena Patel" }
+        ]
+      },
+      {
+        id: "AP-1005", name: "Baby Aarav", age: 0, gender: "Male", phone: "9876500009",
+        village: "Demo Village", emergencyContact: "Sunita Sharma (Mother) · 9876500009", householdId: "HH-05",
+        bloodGroup: "Unknown", allergies: "None known", conditions: "None", medicines: "None",
+        vitals: { bp: "—", pulse: 128, temp: 98.6, spo2: 98, resp: 34, weight: 3.1, sugar: 0 },
+        symptoms: "Feeding well, no danger signs observed", riskCategory: "Children", lastVisit: "2026-01-12", registeredBy: "Meena Patel",
+        newborn: true, birthDate: "2026-01-12", motherName: "Sunita Sharma", deliveryPlace: "City General Hospital",
+        visits: [
+          { date: "2026-01-12", vitals: { bp: "—", pulse: 130, temp: 98.7, spo2: 98, resp: 36, weight: 3.1, sugar: 0 }, notes: "Day 0 — birth details recorded. Institutional delivery, no complications.", recordedBy: "Meena Patel" }
+        ]
       }
     ],
+
+    // ---- Household register — links to the ashaPatients above via
+    // householdId / memberIds so nothing about a person is duplicated.
+    households: [
+      { id: "HH-01", headName: "Lakshmi Devi", village: "Demo Village", address: "12, Shantipur Main Road", phone: "9876500001", memberIds: ["AP-1001"] },
+      { id: "HH-02", headName: "Bhura Singh", village: "Rampura", address: "4, Rampura Cross Street", phone: "9876500003", memberIds: ["AP-1002"] },
+      { id: "HH-03", headName: "Dipak Patel", village: "Sundarpur", address: "22, Sundarpur Lane", phone: "9876500006", memberIds: ["AP-1003"] },
+      { id: "HH-04", headName: "Suresh Patel", village: "Rampura", address: "9, Rampura Cross Street", phone: "9876500008", memberIds: ["AP-1004"] },
+      { id: "HH-05", headName: "Sunita Sharma", village: "Demo Village", address: "31, Shantipur Main Road", phone: "9876500009", memberIds: ["AP-1005"] }
+    ],
+
 
     referrals: [
       {
@@ -1595,6 +1645,16 @@
       {
         id: "FU-9001", patientId: "AP-1001", patientName: "Lakshmi Devi",
         reason: "Hypertension & Diabetes Follow-Up", dueLabel: "Today",
+        status: "Due", createdFrom: null
+      },
+      {
+        id: "FU-9002", patientId: "AP-1004", patientName: "Rina Patel",
+        reason: "Pregnancy follow-up — 32 weeks, monitor BP", dueLabel: "Today",
+        status: "Due", createdFrom: null
+      },
+      {
+        id: "FU-9003", patientId: "AP-1005", patientName: "Baby Aarav",
+        reason: "Newborn home visit (Day 7 — HBNC)", dueLabel: "Today",
         status: "Due", createdFrom: null
       }
     ],
@@ -1635,7 +1695,7 @@
        via the browser's built-in "storage" event — no polling, no server.
      ======================================================================== */
 
-  const STORAGE_KEY = "lifora_shared_state_sih2026_v2";
+  const STORAGE_KEY = "lifora_shared_state_sih2026_v3";
 
   // The one demo patient whose QR code the Patient portal generates, and
   // that the Hospital's camera scanner looks for. Keeping this as a single
@@ -1676,165 +1736,57 @@
   }
 
   /* ========================================================================
-     1c. LOGIN — Phone / Email OTP simulation
+     1c. PORTAL SELECTION — the app's entry point (no login of any kind)
      ------------------------------------------------------------------------
-     This is a prototype login flow, not real authentication: no SMS or
-     email is actually sent, and there's no server checking a password
-     against a database (there's no database that isn't this browser).
-     It reproduces the OTP login *experience* for a demo, using one fixed
-     demo phone number and one fixed demo email, each paired with a fixed
-     demo OTP show directly in the UI so anyone can try it.
+     Lifora opens directly into a portal picker. Choosing a portal is the
+     entire "entry" mechanism — there's no account, password, or OTP.
+     Internally this only ever needs to track which portal is open, which
+     navigateTo()/getCurrentPortalId() already do; this block just handles
+     showing/hiding the picker screen itself.
      ======================================================================== */
 
-  const LOGIN_STORAGE_KEY = "lifora_login_v1";
+  const PORTAL_CHOICE_KEY = "lifora_last_portal_v1";
 
-  const DEMO_LOGIN = {
-    phone: { value: "9265470008", otp: "140706", name: "Aarav Rao" },
-    email: { value: "PS21058@gmail.com", otp: "041005", name: "Aarav Rao" }
-  };
-
-  let loginMethod = "phone";
-  let pendingLoginTarget = "";
-
-  function getLoginState() {
-    try {
-      return JSON.parse(localStorage.getItem(LOGIN_STORAGE_KEY) || "null");
-    } catch (e) {
-      return null;
-    }
+  // Reveals the app shell and hides the portal-selection screen. There is
+  // no "show" counterpart with its own function — the picker is the
+  // default state (body starts with no special class in the HTML), so
+  // nothing needs to explicitly show it on load; it's only ever hidden.
+  function enterPortal(portalId) {
+    document.body.classList.add("portal-chosen");
+    try { localStorage.setItem(PORTAL_CHOICE_KEY, portalId); } catch (e) {}
+    navigateTo(portalId, null);
   }
 
-  function setLoginState(state) {
-    try { localStorage.setItem(LOGIN_STORAGE_KEY, JSON.stringify(state)); } catch (e) {}
-    updateSignInButton();
+  function showPortalSelection() {
+    document.body.classList.remove("portal-chosen");
+    try { localStorage.removeItem(PORTAL_CHOICE_KEY); } catch (e) {}
   }
 
-  function clearLoginState() {
-    try { localStorage.removeItem(LOGIN_STORAGE_KEY); } catch (e) {}
-    updateSignInButton();
-  }
+  function wirePortalSelection() {
+    $all("[data-select-portal]").forEach(card => {
+      card.addEventListener("click", () => enterPortal(card.dataset.selectPortal));
+    });
+    const changeBtn = $("#changePortalBtn");
+    if (changeBtn) changeBtn.addEventListener("click", showPortalSelection);
 
-  function updateSignInButton() {
-    const btn = $("#signInBtn");
-    if (!btn) return;
-    const state = getLoginState();
-    if (state) {
-      btn.textContent = "✓ Signed in";
-      btn.classList.add("is-signed-in");
-      btn.title = `Signed in as ${state.name} (via ${state.method === "phone" ? "phone" : "email"}) — click to sign out`;
-    } else {
-      btn.textContent = "Sign In";
-      btn.classList.remove("is-signed-in");
-      btn.title = "";
-    }
-  }
-
-  function resetLoginStep() {
-    $("#loginStepEntry").style.display = "block";
-    $("#loginStepOtp").style.display = "none";
-    $("#loginError").textContent = "";
-  }
-
-  // Reveals the whole app and hides the auth gate. There is no "open the
-  // gate" counterpart with its own function — the gate is the default
-  // state (body starts with class="pre-auth" in the HTML), so nothing
-  // needs to explicitly show it on load; it's only ever hidden.
-  function revealApp() {
-    document.body.classList.remove("pre-auth");
-  }
-
-  function showAuthGate() {
-    document.body.classList.add("pre-auth");
-    resetLoginStep();
-    $("#loginPhoneInput").value = "";
-    $("#loginEmailInput").value = "";
-  }
-
-  function wireLogin() {
-    const signInBtn = $("#signInBtn");
-    if (signInBtn) {
-      signInBtn.addEventListener("click", () => {
-        clearLoginState();
-        toast("Signed out");
-        showAuthGate();
+    const langSel = $("#portalSelectLangSelect");
+    if (langSel) {
+      langSel.addEventListener("change", () => {
+        const globalSel = $("#globalLangSelect");
+        if (globalSel) {
+          globalSel.value = langSel.value;
+          globalSel.dispatchEvent(new Event("change"));
+        }
       });
     }
 
-    const quickDemoBtn = $("#quickDemoSignInBtn");
-    if (quickDemoBtn) {
-      quickDemoBtn.addEventListener("click", () => {
-        setLoginState({ method: "demo", target: "9265470008", name: "Aarav Rao", time: Date.now() });
-        logAudit("Demo sign in", "Aarav Rao", "Aarav Rao", "login");
-        toast("Signed in as Aarav Rao (Demo mode)");
-        revealApp();
-      });
+    // Returning visitor in this same browser tab — skip straight back into
+    // the portal they were last using instead of showing the picker again.
+    let lastPortal = null;
+    try { lastPortal = localStorage.getItem(PORTAL_CHOICE_KEY); } catch (e) {}
+    if (lastPortal && document.getElementById("portal-" + lastPortal)) {
+      enterPortal(lastPortal);
     }
-
-    $all(".login-method-switch .chip").forEach(chip => {
-      chip.addEventListener("click", () => {
-        $all(".login-method-switch .chip").forEach(c => c.classList.remove("active"));
-        chip.classList.add("active");
-        loginMethod = chip.dataset.method;
-        $("#loginPhoneField").style.display = loginMethod === "phone" ? "block" : "none";
-        $("#loginEmailField").style.display = loginMethod === "email" ? "block" : "none";
-        resetLoginStep();
-      });
-    });
-
-    $("#sendOtpBtn").addEventListener("click", () => {
-      const err = $("#loginError");
-      err.textContent = "";
-      if (loginMethod === "phone") {
-        const val = $("#loginPhoneInput").value.trim();
-        if (!/^\d{10}$/.test(val)) { err.textContent = "Enter a valid 10-digit phone number."; return; }
-        pendingLoginTarget = val;
-        $("#otpSentTo").textContent = `OTP sent to +91 ${val} (simulated)`;
-      } else {
-        const val = $("#loginEmailInput").value.trim();
-        if (!/^\S+@\S+\.\S+$/.test(val)) { err.textContent = "Enter a valid email address."; return; }
-        pendingLoginTarget = val;
-        $("#otpSentTo").textContent = `OTP sent to ${val} (simulated)`;
-      }
-      const demo = loginMethod === "phone" ? DEMO_LOGIN.phone : DEMO_LOGIN.email;
-      $("#otpHint").innerHTML = `Demo OTP: <span class="mono">${demo.otp}</span>`;
-      $("#loginOtpInput").value = "";
-      $("#loginStepEntry").style.display = "none";
-      $("#loginStepOtp").style.display = "block";
-      $("#loginOtpInput").focus();
-      toast("OTP sent (simulated)");
-    });
-
-    $("#changeLoginMethodBtn").addEventListener("click", resetLoginStep);
-
-    $("#verifyOtpBtn").addEventListener("click", () => {
-      const err = $("#loginError");
-      err.textContent = "";
-      const entered = $("#loginOtpInput").value.trim();
-      const demo = loginMethod === "phone" ? DEMO_LOGIN.phone : DEMO_LOGIN.email;
-      const targetMatches = loginMethod === "phone"
-        ? pendingLoginTarget === demo.value
-        : pendingLoginTarget.toLowerCase() === demo.value.toLowerCase();
-
-      if (!targetMatches) {
-        err.textContent = `This demo only recognizes the demo ${loginMethod === "phone" ? "number" : "email"} shown above.`;
-        return;
-      }
-      if (entered !== demo.otp) {
-        err.textContent = "Incorrect OTP — please try again.";
-        return;
-      }
-
-      setLoginState({ method: loginMethod, target: pendingLoginTarget, name: demo.name, time: Date.now() });
-      logAudit("Patient signed in", demo.name, demo.name, "login");
-      toast(`Signed in as ${demo.name} via ${loginMethod === "phone" ? "phone OTP" : "email OTP"}`);
-      revealApp();
-    });
-
-    // Enter key submits the current step, since there's no way to click
-    // "away" from a mandatory gate — keyboard-only sign-in must work.
-    $("#loginPhoneInput").addEventListener("keydown", (e) => { if (e.key === "Enter") $("#sendOtpBtn").click(); });
-    $("#loginEmailInput").addEventListener("keydown", (e) => { if (e.key === "Enter") $("#sendOtpBtn").click(); });
-    $("#loginOtpInput").addEventListener("keydown", (e) => { if (e.key === "Enter") $("#verifyOtpBtn").click(); });
   }
 
   /* ========================================================================
@@ -1920,10 +1872,11 @@
   const ROLE_MAP = {
     public: { name: "Guest", tag: "Public site", initials: "GU" },
     patient: { name: "Aarav Rao", tag: "Patient", initials: "AR" },
-    asha: { name: "Nurse Kulkarni", tag: "Community Health Worker", initials: "NK" },
-    hospital: { name: "Dr. S. Bhatt", tag: "Emergency Dept.", initials: "SB" },
+    asha: { name: "Meena Patel", tag: "ASHA", initials: "MP" },
+    nurse: { name: "Nurse Kulkarni", tag: "Nurse", initials: "NK" },
+    hospital: { name: "Dr. S. Bhatt", tag: "Hospital / Admin", initials: "SB" },
     ambulance: { name: "R. Sen", tag: "Ambulance crew", initials: "RS" },
-    resource: { name: "K. Verma", tag: "Blood Bank", initials: "KV" },
+    resource: { name: "K. Verma", tag: "Healthcare Services", initials: "KV" },
     admin: { name: "Hospital Admin", tag: "Administrator", initials: "HA" }
   };
 
@@ -2030,12 +1983,19 @@
     "h-triage": renderTriageApplyToOptions,
     "h-referrals": renderHospitalReferrals,
     "asha-dashboard": renderAshaDashboard,
+    "asha-households": renderAshaHouseholdList,
+    "asha-household-profile": renderAshaHouseholdProfile,
     "asha-register": resetAshaWizard,
     "asha-patients": renderAshaPatientsTable,
     "asha-patient-profile": renderAshaPatientProfile,
     "asha-urgency": renderAshaUrgencyPatientSelect,
     "asha-referrals": renderAshaReferralsView,
-    "asha-followups": renderAshaFollowups
+    "asha-followups": renderAshaFollowups,
+    "n-dashboard": renderNurseDashboard,
+    "n-patients": renderNursePatientsTable,
+    "n-patient-profile": renderNursePatientProfile,
+    "n-tasks": renderNurseTasks,
+    "n-handover": renderNurseHandover
   };
 
   function runRenderer(viewId) {
@@ -3161,21 +3121,130 @@
 
   /* ---- Dashboard --------------------------------------------------------- */
 
-  function renderAshaDashboard() {
-    const el = $("#ashaKpis");
-    if (!el) return;
+  // ---- Today's Priorities (ASHA landing screen) ---------------------------
+  // Every count here is computed live from db.ashaPatients / db.referrals /
+  // db.followUps — nothing is hard-coded — so the numbers move as the demo
+  // data changes (new registration, new referral, sync, etc).
+  function ashaHighRiskPatients() {
+    return db.ashaPatients.filter(p => ["Maternal", "Children", "Elderly"].includes(p.riskCategory) || (p.conditions && p.conditions !== "None"));
+  }
+  function ashaOverdueFollowUps() {
+    return db.followUps.filter(f => f.status === "Due" && /overdue/i.test(f.dueLabel || ""));
+  }
+  function ashaDueFollowUps() {
+    return db.followUps.filter(f => f.status === "Due" && !/overdue/i.test(f.dueLabel || ""));
+  }
+  function ashaPendingReferrals() {
+    return db.referrals.filter(r => r.status !== "COMPLETED");
+  }
+  function ashaPregnancyFollowUpsDue() {
+    return db.followUps.filter(f => f.status === "Due" && /pregnan/i.test(f.reason || ""));
+  }
+  function ashaNewbornFollowUpsDue() {
+    return db.followUps.filter(f => f.status === "Due" && /newborn/i.test(f.reason || ""));
+  }
+
+  function jumpAshaHouseholds(filter) {
+    ashaHouseholdFilter = filter;
+    showView($("#portal-asha"), "asha-households");
+    const chips = $all("#ashaHouseholdFilters .chip");
+    chips.forEach(c => c.classList.toggle("active", c.dataset.hhFilter === filter));
+  }
+
+  function jumpAshaPatients(filter) {
+    ashaPatientsFilter = filter;
+    showView($("#portal-asha"), "asha-patients");
+    const chips = $all("#ashaRiskFilters .chip");
+    chips.forEach(c => c.classList.toggle("active", c.dataset.risk === filter));
+  }
+
+  function renderAshaPriorityGrid() {
+    const grid = $("#ashaPriorityGrid");
+    if (!grid) return;
     const today = todayStr();
     const registeredToday = db.ashaPatients.filter(p => p.lastVisit === today).length;
-    const highRisk = db.ashaPatients.filter(p => p.riskCategory && p.riskCategory !== "Other").length;
-    const pendingReferrals = db.referrals.filter(r => r.status !== "COMPLETED").length;
-    const followUpsDue = db.followUps.filter(f => f.status === "Due").length;
-    el.innerHTML = `
-      <div class="tsum-card tsum-total"><span>Registered today</span><strong>${registeredToday}</strong></div>
-      <div class="tsum-card tsum-total"><span>Total patients</span><strong>${db.ashaPatients.length}</strong></div>
-      <div class="tsum-card tsum-orange"><span>High-risk patients</span><strong>${highRisk}</strong></div>
-      <div class="tsum-card tsum-yellow"><span>Pending referrals</span><strong>${pendingReferrals}</strong></div>
-      <div class="tsum-card tsum-red"><span>Follow-ups due</span><strong>${followUpsDue}</strong></div>
-    `;
+    const highRisk = ashaHighRiskPatients().length;
+    const dueToday = ashaDueFollowUps().length;
+    const overdue = ashaOverdueFollowUps().length;
+    const pendingReferrals = ashaPendingReferrals().length;
+    const pregnancyDue = ashaPregnancyFollowUpsDue().length;
+    const newbornDue = ashaNewbornFollowUpsDue().length;
+
+    const cards = [
+      { tone: "red", label: "Urgent / High-Risk Cases", count: highRisk, action: () => jumpAshaPatients("High") },
+      { tone: "orange", label: "Pregnancy Follow-ups Due", count: pregnancyDue, action: () => jumpAshaHouseholds("pregnant") },
+      { tone: "orange", label: "Newborn Follow-ups Due", count: newbornDue, action: () => jumpAshaHouseholds("newborn") },
+      { tone: "yellow", label: "Home Visits / Follow-ups Due", count: dueToday, action: () => showView($("#portal-asha"), "asha-followups") },
+      { tone: "red", label: "Overdue Follow-ups", count: overdue, action: () => showView($("#portal-asha"), "asha-followups") },
+      { tone: "orange", label: "Pending Referrals", count: pendingReferrals, action: () => showView($("#portal-asha"), "asha-referrals") },
+      { tone: "teal", label: "Registered Today", count: registeredToday, action: () => jumpAshaPatients("all") },
+      { tone: "teal", label: "Total Households", count: db.households.length, action: () => jumpAshaHouseholds("all") }
+    ];
+
+    grid.innerHTML = cards.map((c, i) => `
+      <button type="button" class="priority-card tone-${c.tone}" data-priority-idx="${i}">
+        <strong>${c.count}</strong>
+        <span>${esc(c.label)}</span>
+      </button>
+    `).join("");
+    $all("[data-priority-idx]", grid).forEach((btn, i) => btn.addEventListener("click", cards[i].action));
+  }
+
+  // Picks the single most important next task from the demo data:
+  // 1) an overdue follow-up, 2) a follow-up due today, 3) a high-urgency
+  // pending referral, 4) a high-risk patient with no recent visit — else,
+  // nothing urgent right now.
+  function renderAshaDoNow() {
+    const body = $("#ashaDoNowBody");
+    if (!body) return;
+    const overdue = ashaOverdueFollowUps();
+    const dueToday = ashaDueFollowUps();
+    const urgentReferral = db.referrals.find(r => r.urgency === "HIGH" && r.status !== "COMPLETED");
+
+    let task = null;
+    if (overdue.length) task = { fu: overdue[0], tag: "Overdue follow-up" };
+    else if (dueToday.length) task = { fu: dueToday[0], tag: "Follow-up due today" };
+
+    if (task) {
+      const patient = db.ashaPatients.find(p => p.id === task.fu.patientId);
+      body.innerHTML = `
+        <p class="section-note" style="margin:6px 0 12px;font-size:14px;color:var(--ink-1);"><strong>${esc(task.fu.patientName)}</strong> — ${esc(task.fu.reason)} <span class="badge badge-yellow">${esc(task.tag)}</span></p>
+        <div class="quick-actions">
+          <button class="btn btn-primary btn-sm" id="ashaDoNowOpenPatient">Open Patient</button>
+          <button class="btn btn-ghost btn-sm" id="ashaDoNowRecordVisit">Record Findings</button>
+        </div>`;
+      const openBtn = $("#ashaDoNowOpenPatient");
+      if (openBtn) openBtn.addEventListener("click", () => {
+        pendingAshaProfilePatientId = patient ? patient.id : task.fu.patientId;
+        showView($("#portal-asha"), "asha-patient-profile");
+      });
+      const visitBtn = $("#ashaDoNowRecordVisit");
+      if (visitBtn) visitBtn.addEventListener("click", () => {
+        pendingAshaProfilePatientId = patient ? patient.id : task.fu.patientId;
+        showView($("#portal-asha"), "asha-patient-profile");
+        setTimeout(() => { const b = $("#ashaProfileRecordVisit"); if (b) b.click(); }, 0);
+      });
+      return;
+    }
+
+    if (urgentReferral) {
+      body.innerHTML = `
+        <p class="section-note" style="margin:6px 0 12px;font-size:14px;color:var(--ink-1);"><strong>${esc(urgentReferral.patientName)}</strong> — referral to ${esc(urgentReferral.facility)} is still <span class="badge badge-orange">${esc(urgentReferral.status)}</span></p>
+        <div class="quick-actions">
+          <button class="btn btn-primary btn-sm" id="ashaDoNowOpenReferral">Check Referral Status</button>
+        </div>`;
+      const btn = $("#ashaDoNowOpenReferral");
+      if (btn) btn.addEventListener("click", () => showView($("#portal-asha"), "asha-referrals"));
+      return;
+    }
+
+    body.innerHTML = `<p class="section-note" style="margin:6px 0 0;">No urgent follow-ups or referrals right now — a good time to update household records or plan the next home visit.</p>`;
+  }
+
+  function renderAshaDashboard() {
+    if (!$("#ashaPriorityGrid")) return;
+    renderAshaPriorityGrid();
+    renderAshaDoNow();
     const previewEl = $("#ashaFollowupsPreview");
     if (previewEl) {
       const due = db.followUps.filter(f => f.status === "Due");
@@ -3184,6 +3253,174 @@
         : `<p class="escalation-empty">No follow-ups due right now.</p>`;
     }
     updateAshaOfflineStatus();
+  }
+
+  // ---- My Families — Digital Household Register --------------------------
+  // Households only ever reference existing db.ashaPatients records via
+  // memberIds, so nothing about a person is duplicated between the two.
+  function ashaHouseholdMembers(hh) {
+    return hh.memberIds.map(id => db.ashaPatients.find(p => p.id === id)).filter(Boolean);
+  }
+  function ashaHouseholdTags(hh) {
+    const members = ashaHouseholdMembers(hh);
+    return {
+      pregnant: members.some(m => m.pregnant),
+      newborn: members.some(m => m.newborn),
+      highRisk: members.some(m => ["Maternal", "Children", "Elderly"].includes(m.riskCategory) || (m.conditions && m.conditions !== "None")),
+      referral: members.some(m => db.referrals.some(r => r.patientId === m.id && r.status !== "COMPLETED"))
+    };
+  }
+
+  let ashaHouseholdFilter = "all";
+  let ashaHouseholdSearchTerm = "";
+  let currentAshaHouseholdId = null;
+  let pendingAshaHouseholdId = null;
+
+  function renderAshaHouseholdList() {
+    const el = $("#ashaHouseholdList");
+    if (!el) return;
+    let list = db.households.slice();
+    const term = ashaHouseholdSearchTerm.trim().toLowerCase();
+    if (term) {
+      list = list.filter(hh => {
+        const members = ashaHouseholdMembers(hh);
+        return hh.headName.toLowerCase().includes(term) || hh.id.toLowerCase().includes(term) ||
+          hh.phone.includes(term) || hh.village.toLowerCase().includes(term) ||
+          members.some(m => m.name.toLowerCase().includes(term));
+      });
+    }
+    if (ashaHouseholdFilter !== "all") {
+      list = list.filter(hh => {
+        const tags = ashaHouseholdTags(hh);
+        if (ashaHouseholdFilter === "pregnant") return tags.pregnant;
+        if (ashaHouseholdFilter === "newborn") return tags.newborn;
+        if (ashaHouseholdFilter === "high-risk") return tags.highRisk;
+        if (ashaHouseholdFilter === "referral") return tags.referral;
+        return true;
+      });
+    }
+    el.innerHTML = list.length ? list.map(hh => {
+      const tags = ashaHouseholdTags(hh);
+      const members = ashaHouseholdMembers(hh);
+      const badges = [];
+      if (tags.pregnant) badges.push('<span class="badge badge-orange">Pregnant</span>');
+      if (tags.newborn) badges.push('<span class="badge badge-orange">Newborn</span>');
+      if (tags.highRisk) badges.push('<span class="badge badge-red">High risk</span>');
+      if (tags.referral) badges.push('<span class="badge badge-yellow">Referral pending</span>');
+      return `
+      <button type="button" class="household-card" data-hh-id="${esc(hh.id)}">
+        <div class="hh-card-top"><strong>${esc(hh.headName)}'s Household</strong><span class="mono">${esc(hh.id)}</span></div>
+        <p class="section-note" style="margin:4px 0 8px;">${esc(hh.village)} · ${members.length} member${members.length === 1 ? "" : "s"}</p>
+        <div class="hh-card-badges">${badges.join("") || '<span class="badge badge-muted">No alerts</span>'}</div>
+      </button>`;
+    }).join("") : `<p class="escalation-empty">No households match this search/filter.</p>`;
+
+    $all("[data-hh-id]", el).forEach(btn => btn.addEventListener("click", () => {
+      pendingAshaHouseholdId = btn.dataset.hhId;
+      showView($("#portal-asha"), "asha-household-profile");
+    }));
+  }
+
+  function wireAshaHouseholdFilters() {
+    const searchEl = $("#ashaHouseholdSearch");
+    if (searchEl) searchEl.addEventListener("input", () => { ashaHouseholdSearchTerm = searchEl.value; renderAshaHouseholdList(); });
+    $all("#ashaHouseholdFilters .chip").forEach(chip => {
+      chip.addEventListener("click", () => {
+        $all("#ashaHouseholdFilters .chip").forEach(c => c.classList.remove("active"));
+        chip.classList.add("active");
+        ashaHouseholdFilter = chip.dataset.hhFilter;
+        renderAshaHouseholdList();
+      });
+    });
+  }
+
+  function renderAshaHouseholdProfile() {
+    const targetId = pendingAshaHouseholdId || currentAshaHouseholdId || (db.households[0] && db.households[0].id);
+    const hh = db.households.find(h => h.id === targetId) || db.households[0];
+    pendingAshaHouseholdId = null;
+    if (!hh) return;
+    currentAshaHouseholdId = hh.id;
+    const members = ashaHouseholdMembers(hh);
+    const tags = ashaHouseholdTags(hh);
+
+    $("#ashaHHEyebrow").textContent = hh.id + " · Household";
+    $("#ashaHHName").textContent = hh.headName + "'s Household";
+
+    $("#ashaHHInfo").innerHTML = `
+      <h3>Household Information</h3>
+      <div class="id-card-row"><span>Village</span><strong>${esc(hh.village)}</strong></div>
+      <div class="id-card-row"><span>Address</span><strong>${esc(hh.address)}</strong></div>
+      <div class="id-card-row"><span>Phone</span><strong>${esc(hh.phone)}</strong></div>
+      <div class="id-card-row"><span>Members</span><strong>${members.length}</strong></div>`;
+
+    const alertBadges = [];
+    if (tags.pregnant) alertBadges.push('<span class="badge badge-orange">Pregnant member — ANC follow-up</span>');
+    if (tags.newborn) alertBadges.push('<span class="badge badge-orange">Newborn — HBNC schedule due</span>');
+    if (tags.highRisk) alertBadges.push('<span class="badge badge-red">High-risk member</span>');
+    if (tags.referral) alertBadges.push('<span class="badge badge-yellow">Referral pending</span>');
+    $("#ashaHHAlerts").innerHTML = `<h3>Priority Alerts</h3>${alertBadges.length ? `<div class="quick-actions">${alertBadges.join("")}</div>` : '<p class="section-note">No active alerts for this household.</p>'}`;
+
+    $("#ashaHHMembers").innerHTML = members.map(m => `
+      <button type="button" class="asha-hh-member-link hh-member-row" data-pid="${esc(m.id)}">
+        <span><strong>${esc(m.name)}</strong> · ${m.age} / ${esc(m.gender)}${m.pregnant ? " · Pregnant (" + (m.gestationWeeks || "—") + " wks)" : ""}${m.newborn ? " · Newborn" : ""}</span>
+        <span class="badge ${(!m.riskCategory || m.riskCategory === "Other") ? "badge-muted" : "badge-orange"}">${esc(m.riskCategory || "Other")}</span>
+      </button>`).join("");
+    $all(".asha-hh-member-link", $("#ashaHHMembers")).forEach(btn => btn.addEventListener("click", () => {
+      pendingAshaProfilePatientId = btn.dataset.pid;
+      showView($("#portal-asha"), "asha-patient-profile");
+    }));
+
+    // Combined visit history across every member of this household — one
+    // shared household timeline instead of hunting through each person.
+    let allVisits = [];
+    members.forEach(m => (m.visits || []).forEach(v => allVisits.push({ ...v, memberName: m.name })));
+    allVisits.sort((a, b) => (a.date < b.date ? 1 : -1));
+    $("#ashaHHVisitHistory").innerHTML = allVisits.length ? allVisits.map(v => `
+      <li>
+        <span class="mono">${esc(v.date)}</span>
+        <div>
+          <h4>${esc(v.memberName)}${v.reason ? " — " + esc(v.reason) : ""}</h4>
+          <p>${esc(v.notes) || "No notes recorded"} — ${esc(v.recordedBy)}</p>
+        </div>
+      </li>`).join("") : `<li><span class="mono">—</span><div><p>No visits recorded yet.</p></div></li>`;
+
+    const referrals = db.referrals.filter(r => members.some(m => m.id === r.patientId));
+    $("#ashaHHReferralsTable tbody").innerHTML = referrals.length ? referrals.map(r => `
+      <tr>
+        <td>${esc(r.patientName)}</td>
+        <td>${esc(r.facility)}</td>
+        <td><span class="badge ${badgeClassForPriority(r.urgency)}">${esc(URGENCY_LABEL[r.urgency] || r.urgency)}</span></td>
+        <td><span class="badge ${referralBadgeClass(r.status)}">${esc(r.status)}</span></td>
+      </tr>`).join("") : `<tr class="empty-row"><td colspan="4">No referrals for this household yet.</td></tr>`;
+
+    $("#ashaHHMemberChooser").style.display = "none";
+  }
+
+  // "Smart" home visit entry point — one member: open the visit modal
+  // straight away with a reason inferred from that person's record
+  // (pregnant → Pregnancy, newborn → Newborn, else routine). More than one
+  // member: ask who the visit is for first.
+  function wireAshaHouseholdProfile() {
+    $("#ashaHHStartVisit").addEventListener("click", () => {
+      const hh = db.households.find(h => h.id === currentAshaHouseholdId);
+      if (!hh) return;
+      const members = ashaHouseholdMembers(hh);
+      if (members.length === 1) {
+        const m = members[0];
+        const reason = m.pregnant ? "Pregnancy" : m.newborn ? "Newborn" : "Routine follow-up";
+        openVisitModal(m.id, `Home Visit — ${m.name}`, reason);
+        return;
+      }
+      const chooser = $("#ashaHHMemberChooser");
+      const list = $("#ashaHHMemberChooserList");
+      list.innerHTML = members.map(m => `<button type="button" class="btn btn-secondary btn-sm" data-pid="${esc(m.id)}">${esc(m.name)}</button>`).join("");
+      $all("[data-pid]", list).forEach(btn => btn.addEventListener("click", () => {
+        const m = members.find(x => x.id === btn.dataset.pid);
+        const reason = m.pregnant ? "Pregnancy" : m.newborn ? "Newborn" : "Routine follow-up";
+        openVisitModal(m.id, `Home Visit — ${m.name}`, reason);
+      }));
+      chooser.style.display = chooser.style.display === "none" ? "block" : "none";
+    });
   }
 
   /* ---- Register Patient — 4-step wizard ---------------------------------- */
@@ -3528,11 +3765,16 @@
 
   let visitModalPatientId = null;
 
-  function openVisitModal(patientId, title) {
+  function openVisitModal(patientId, title, defaultReason) {
     const patient = db.ashaPatients.find(p => p.id === patientId);
     if (!patient) return;
     visitModalPatientId = patientId;
     $("#visitModalTitle").textContent = title || "Record New Visit";
+    const reasonEl = $("#visitReason");
+    if (reasonEl) {
+      const inferred = defaultReason || (patient.pregnant ? "Pregnancy" : patient.newborn ? "Newborn" : "Routine follow-up");
+      reasonEl.value = [...reasonEl.options].some(o => o.value === inferred) ? inferred : "Routine follow-up";
+    }
     $("#visitBP").value = patient.vitals.bp && patient.vitals.bp !== "—" ? patient.vitals.bp : "";
     $("#visitPulse").value = patient.vitals.pulse || "";
     $("#visitTemp").value = patient.vitals.temp || "";
@@ -3567,11 +3809,19 @@
         weight: parseFloat($("#visitWeight").value) || patient.vitals.weight
       };
       const notes = $("#visitNotes").value.trim();
+      const reasonEl = $("#visitReason");
+      const reason = reasonEl ? reasonEl.value : "Routine follow-up";
       if (!patient.visits) patient.visits = [];
-      patient.visits.push({ date: todayStr(), vitals, notes, recordedBy: "Nurse Kulkarni" });
+      patient.visits.push({ date: todayStr(), vitals, notes: notes ? `[${reason}] ${notes}` : `[${reason}] No additional notes recorded.`, recordedBy: "Nurse Kulkarni", reason });
       patient.vitals = vitals;
       patient.symptoms = notes || patient.symptoms;
       patient.lastVisit = todayStr();
+
+      // If this was a follow-up-triggered visit, mark that follow-up completed.
+      const dueFu = db.followUps.find(f => f.patientId === patient.id && f.status === "Due");
+      if (dueFu && (reason === "Pregnancy" || reason === "Newborn" || reason === "Routine follow-up")) {
+        dueFu.status = "Completed";
+      }
 
       saveDB();
       logAudit("Visit recorded", "Nurse Kulkarni", patient.name, "visit");
@@ -3581,6 +3831,8 @@
       if (viewIsActive("asha-patient-profile")) renderAshaPatientProfile();
       if (viewIsActive("asha-patients")) renderAshaPatientsTable();
       if (viewIsActive("asha-dashboard")) renderAshaDashboard();
+      if (viewIsActive("asha-household-profile")) renderAshaHouseholdProfile();
+      if (viewIsActive("asha-followups")) renderAshaFollowups();
     });
   }
 
@@ -3981,10 +4233,198 @@
     if (viewIsActive("asha-followups")) renderAshaFollowups();
   }
 
+  /* ========================================================================
+     NURSE PORTAL — patient care, tasks & handover
+     ------------------------------------------------------------------------
+     Reuses the same shared patient queue (db.patients) as Hospital/Admin —
+     a nurse's "assigned patients" is that same live queue, viewed and acted
+     on differently (care tasks, nursing notes, medication) rather than a
+     duplicated data set. db.nurseTasks/db.nurseNotes/db.handoverNote are
+     the only new nurse-specific data.
+     ======================================================================== */
+
+  function nurseMedicationTasksDue() {
+    return db.nurseTasks.filter(t => t.type === "Medication" && t.status === "Due");
+  }
+  function nurseClinicalAlertPatients() {
+    return db.patients.filter(p => p.priority === "RED");
+  }
+  function nursePendingHandoverTasks() {
+    return db.nurseTasks.filter(t => t.type === "Handover" && t.status === "Pending");
+  }
+  function nurseDischargePrepTasks() {
+    return db.nurseTasks.filter(t => t.type === "Discharge Prep" && t.status === "Pending");
+  }
+
+  let pendingNurseProfilePatientId = null;
+  let currentNurseProfilePatientId = null;
+  let nurseTaskFilter = "all";
+
+  function jumpNursePatients() {
+    showView($("#portal-nurse"), "n-patients");
+  }
+  function jumpNurseTasks(filter) {
+    nurseTaskFilter = filter;
+    showView($("#portal-nurse"), "n-tasks");
+    const chips = $all("#nurseTaskFilters .chip");
+    chips.forEach(c => c.classList.toggle("active", c.dataset.taskFilter === filter));
+  }
+
+  function renderNursePriorityGrid() {
+    const grid = $("#nursePriorityGrid");
+    if (!grid) return;
+    const cards = [
+      { tone: "teal", label: "Assigned Patients", count: db.patients.length, action: jumpNursePatients },
+      { tone: "yellow", label: "Medication Tasks Due", count: nurseMedicationTasksDue().length, action: () => jumpNurseTasks("Medication") },
+      { tone: "red", label: "Clinical Alerts", count: nurseClinicalAlertPatients().length, action: jumpNursePatients },
+      { tone: "orange", label: "Pending Handover", count: nursePendingHandoverTasks().length, action: () => jumpNurseTasks("Handover") },
+      { tone: "orange", label: "Discharge Preparations", count: nurseDischargePrepTasks().length, action: () => jumpNurseTasks("Discharge Prep") }
+    ];
+    grid.innerHTML = cards.map((c, i) => `
+      <button type="button" class="priority-card tone-${c.tone}" data-nurse-priority-idx="${i}">
+        <strong>${c.count}</strong>
+        <span>${esc(c.label)}</span>
+      </button>`).join("");
+    $all("[data-nurse-priority-idx]", grid).forEach((btn, i) => btn.addEventListener("click", cards[i].action));
+  }
+
+  function renderNurseDashboard() {
+    if (!$("#nursePriorityGrid")) return;
+    renderNursePriorityGrid();
+    const alerts = nurseClinicalAlertPatients();
+    const el = $("#nurseAlertsPreview");
+    el.innerHTML = alerts.length ? alerts.map(p => `
+      <div class="escalation-item" style="background:var(--red-soft);color:var(--red-dark);">
+        <span>${esc(p.name)} — ${esc(p.dept)}</span>
+        <span class="badge badge-red">RED</span>
+      </div>`).join("") : `<p class="escalation-empty">No red-priority patients right now.</p>`;
+  }
+
+  function renderNursePatientsTable() {
+    const tbody = $("#nursePatientsTable tbody");
+    if (!tbody) return;
+    tbody.innerHTML = db.patients.map(p => `
+      <tr class="clickable-row" data-nurse-pid="${esc(p.id)}">
+        <td><strong>${esc(p.name)}</strong><br><span class="mono" style="font-size:11px;">${esc(p.id)}</span></td>
+        <td>${esc(p.dept)}</td>
+        <td><span class="badge ${badgeClassForPriority(p.priority)}">${esc(p.priority)}</span></td>
+        <td>${esc(p.status)}</td>
+        <td>${p.waitingMin} min</td>
+      </tr>`).join("");
+    $all("[data-nurse-pid]", tbody).forEach(row => row.addEventListener("click", () => {
+      pendingNurseProfilePatientId = row.dataset.nursePid;
+      showView($("#portal-nurse"), "n-patient-profile");
+    }));
+  }
+
+  function renderNursePatientProfile() {
+    const targetId = pendingNurseProfilePatientId || currentNurseProfilePatientId || (db.patients[0] && db.patients[0].id);
+    const patient = db.patients.find(p => p.id === targetId) || db.patients[0];
+    pendingNurseProfilePatientId = null;
+    if (!patient) return;
+    currentNurseProfilePatientId = patient.id;
+
+    $("#nurseProfileName").textContent = patient.name;
+    $("#nurseProfileInfo").innerHTML = `
+      <h3>Patient Information</h3>
+      <div class="id-card-row"><span>ID</span><strong>${esc(patient.id)}</strong></div>
+      <div class="id-card-row"><span>Department</span><strong>${esc(patient.dept)}</strong></div>
+      <div class="id-card-row"><span>Priority</span><strong><span class="badge ${badgeClassForPriority(patient.priority)}">${esc(patient.priority)}</span></strong></div>
+      <div class="id-card-row"><span>Status</span><strong>${esc(patient.status)}</strong></div>
+      <div class="id-card-row"><span>Waiting</span><strong>${patient.waitingMin} min</strong></div>`;
+
+    const tasks = db.nurseTasks.filter(t => t.patientId === patient.id);
+    $("#nurseProfileTasks").innerHTML = tasks.length ? tasks.map(t => `
+      <div class="escalation-item" style="background:${t.status === "Done" ? "var(--teal-100)" : "var(--yellow-soft)"};">
+        <span>${esc(t.type)} — ${esc(t.detail)} (${esc(t.dueTime)})</span>
+        <span class="badge ${t.status === "Done" ? "badge-muted" : "badge-yellow"}">${esc(t.status)}</span>
+      </div>`).join("") : `<p class="escalation-empty">No care tasks logged for this patient.</p>`;
+
+    const notes = db.nurseNotes[patient.id] || [];
+    $("#nurseProfileNotes").innerHTML = notes.length ? `<ul class="timeline">${notes.map(n => `
+      <li><span class="mono">${esc(n.time)}</span><div><p>${esc(n.text)}</p></div></li>`).join("")}</ul>` : `<p class="section-note">No nursing notes yet.</p>`;
+  }
+
+  function renderNurseTasks() {
+    const el = $("#nurseTaskList");
+    if (!el) return;
+    let tasks = db.nurseTasks.slice();
+    if (nurseTaskFilter !== "all") tasks = tasks.filter(t => t.type === nurseTaskFilter);
+    el.innerHTML = tasks.length ? tasks.map(t => `
+      <div class="card card-wide" style="margin-bottom:10px;padding:14px 16px;">
+        <div class="split-head">
+          <div>
+            <strong>${esc(t.patientName)}</strong> — ${esc(t.type)}
+            <p class="section-note" style="margin:2px 0 0;">${esc(t.detail)} · Due ${esc(t.dueTime)}</p>
+          </div>
+          <span class="badge ${t.status === "Done" ? "badge-muted" : "badge-yellow"}">${esc(t.status)}</span>
+        </div>
+        ${t.status !== "Done" ? `<button type="button" class="btn btn-secondary btn-sm" style="margin-top:10px;" data-complete-task="${esc(t.id)}">Mark complete</button>` : ""}
+      </div>`).join("") : `<p class="escalation-empty">No tasks in this category.</p>`;
+    $all("[data-complete-task]", el).forEach(btn => btn.addEventListener("click", () => {
+      const task = db.nurseTasks.find(t => t.id === btn.dataset.completeTask);
+      if (!task) return;
+      task.status = "Done";
+      saveDB();
+      toast(`${task.type} marked complete for ${task.patientName}`);
+      renderNurseTasks();
+      if (viewIsActive("n-dashboard")) renderNurseDashboard();
+      if (viewIsActive("n-patient-profile")) renderNursePatientProfile();
+    }));
+  }
+
+  function renderNurseHandover() {
+    const el = $("#nurseHandoverSummary");
+    if (!el) return;
+    const pending = db.nurseTasks.filter(t => t.status !== "Done");
+    const alerts = nurseClinicalAlertPatients();
+    el.innerHTML = `
+      <h3>Shift summary — auto-generated from current tasks</h3>
+      <div class="id-card-row"><span>Assigned patients</span><strong>${db.patients.length}</strong></div>
+      <div class="id-card-row"><span>Tasks still pending</span><strong>${pending.length}</strong></div>
+      <div class="id-card-row"><span>Clinical alerts</span><strong>${alerts.length}</strong></div>
+      ${pending.length ? `<div class="quick-actions" style="margin-top:12px;">${pending.map(t => `<span class="badge badge-yellow">${esc(t.patientName)} — ${esc(t.type)}</span>`).join("")}</div>` : ""}`;
+    $("#nurseHandoverInput").value = db.handoverNote || "";
+  }
+
+  function wireNurse() {
+    $all("#nurseTaskFilters .chip").forEach(chip => {
+      chip.addEventListener("click", () => {
+        $all("#nurseTaskFilters .chip").forEach(c => c.classList.remove("active"));
+        chip.classList.add("active");
+        nurseTaskFilter = chip.dataset.taskFilter;
+        renderNurseTasks();
+      });
+    });
+
+    $("#nurseNoteForm").addEventListener("submit", (e) => {
+      e.preventDefault();
+      const input = $("#nurseNoteInput");
+      const text = input.value.trim();
+      if (!text || !currentNurseProfilePatientId) return;
+      if (!db.nurseNotes[currentNurseProfilePatientId]) db.nurseNotes[currentNurseProfilePatientId] = [];
+      db.nurseNotes[currentNurseProfilePatientId].push({ time: nowClock(), text });
+      saveDB();
+      input.value = "";
+      toast("Nursing note saved");
+      renderNursePatientProfile();
+    });
+
+    $("#nurseHandoverForm").addEventListener("submit", (e) => {
+      e.preventDefault();
+      db.handoverNote = $("#nurseHandoverInput").value.trim();
+      saveDB();
+      toast("Handover note saved for the next shift");
+    });
+  }
+
+
   function wireAsha() {
     wireAshaRegister();
     wireAshaPatientFilters();
     wireAshaPatientProfile();
+    wireAshaHouseholdFilters();
+    wireAshaHouseholdProfile();
     wireAshaUrgency();
     wireAshaReferrals();
     wireAshaEmergency();
@@ -4033,12 +4473,6 @@
     const hadSavedState = loadDB();
     if (!hadSavedState) saveDB(); // this tab becomes the shared baseline for any other tab opened after it
 
-    // The auth gate is the default state (body starts with class="pre-auth"
-    // in the HTML). If this browser already has a valid login saved —
-    // returning visitor, or another tab just signed in — reveal the app
-    // immediately instead of making them log in again every load.
-    if (getLoginState()) revealApp();
-
     wireNavigation();
     wireQueueFilters();
     wireMedicineFilters();
@@ -4056,11 +4490,11 @@
     wireStaticForms();
     wireResetData();
     wireNetworkStatus();
-    wireLogin();
+    wirePortalSelection();
     wireAsha();
+    wireNurse();
     wireLanguageSelector();
     initLanguage();
-    updateSignInButton();
 
     const heroGetStartedBtn = $("#heroGetStartedBtn");
     if (heroGetStartedBtn) {
@@ -4075,11 +4509,6 @@
     // and silently refresh whatever's currently on screen.
     window.addEventListener("storage", (e) => {
       if (e.key === STORAGE_KEY) { loadDB(); rerenderActiveView(); }
-      if (e.key === LOGIN_STORAGE_KEY) {
-        updateSignInButton();
-        // Someone signed in/out in another tab — this tab's gate follows.
-        if (getLoginState()) revealApp(); else showAuthGate();
-      }
     });
 
     // Camera cleanup if the tab is closed/hidden mid-scan.
@@ -4089,6 +4518,7 @@
     renderHospitalDashboard();
     renderVaultGrid();
     renderAshaDashboard();
+    renderNurseDashboard();
 
     setInterval(tickLiveQueue, 5000);
 
@@ -4096,6 +4526,19 @@
       ? "Welcome back — restored your saved Lifora session"
       : "Welcome to Lifora — this is a live prototype with simulated data");
   }
+
+  /* ========================================================================
+     PUBLIC BRIDGE — exposes just enough of this module's private state for
+     an external file (cloud-sync.js) to read/write the shared data and
+     trigger a re-render, without having to move the whole app out of its
+     IIFE. Nothing else outside this file should reach into `db` directly.
+     ======================================================================== */
+  window.LiforaApp = {
+    getDB: () => db,
+    saveDB,
+    rerenderActiveView,
+    toast
+  };
 
   if (document.readyState === "loading") {
     document.addEventListener("DOMContentLoaded", init);

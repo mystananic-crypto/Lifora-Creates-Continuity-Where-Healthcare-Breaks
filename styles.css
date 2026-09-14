@@ -4178,3 +4178,52 @@ textarea:disabled {
   }
 }
 
+
+
+/* Lifora mobile compatibility layer — preserves desktop UI and prevents viewport overflow. */
+*, *::before, *::after { box-sizing: border-box; }
+html { width: 100%; max-width: 100%; overflow-x: hidden; }
+body { width: 100%; max-width: 100%; overflow-x: hidden; -webkit-text-size-adjust: 100%; }
+img, svg, video, canvas { max-width: 100%; height: auto; }
+button, input, select, textarea { max-width: 100%; font: inherit; }
+.table-responsive, .table-wrap, .data-table-wrap { max-width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+
+@media (max-width: 768px) {
+  body { min-width: 0 !important; }
+  .container, .main-container, .content, .page-content, main, .dashboard-content {
+    width: 100% !important; max-width: 100% !important; min-width: 0 !important;
+  }
+  .row, .grid, .dashboard-grid, .stats-grid, .cards-grid {
+    min-width: 0 !important;
+  }
+  .card, .panel, .modal, .modal-content, .form-card, .section-card {
+    max-width: 100% !important; min-width: 0 !important;
+  }
+  .modal, .modal-content {
+    width: calc(100vw - 24px) !important;
+    max-height: calc(100vh - 24px) !important;
+  }
+  table { min-width: 620px; }
+  .table-responsive, .table-wrap, .data-table-wrap { overflow-x: auto !important; }
+  .sidebar, aside { max-width: 100vw; }
+  .header, .topbar, .navbar, .toolbar { max-width: 100%; }
+  .toolbar, .actions, .button-group { flex-wrap: wrap !important; }
+  .form-row, .form-grid { grid-template-columns: minmax(0, 1fr) !important; }
+  .form-row > *, .form-grid > * { min-width: 0 !important; }
+  input, select, textarea { width: 100%; min-width: 0 !important; }
+  .nav-tabs, .tabs, .portal-tabs { overflow-x: auto; flex-wrap: nowrap !important; max-width: 100%; -webkit-overflow-scrolling: touch; }
+  .nav-tabs > *, .tabs > *, .portal-tabs > * { flex: 0 0 auto; }
+}
+
+@media (max-width: 480px) {
+  body { font-size: 14px; }
+  h1 { font-size: clamp(1.35rem, 6vw, 1.8rem); }
+  h2 { font-size: clamp(1.15rem, 5vw, 1.45rem); }
+  h3 { font-size: clamp(1rem, 4.5vw, 1.2rem); }
+  .modal, .modal-content { width: calc(100vw - 16px) !important; max-height: calc(100vh - 16px) !important; }
+  button { min-height: 42px; }
+}
+
+@media (max-width: 390px) {
+  .modal, .modal-content { width: calc(100vw - 12px) !important; }
+}
